@@ -4,170 +4,159 @@
   <meta charset="UTF-8" />
   <title>Commander Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Commander Center: search + tools + launchpad + notes." />
-
+  <meta name="description" content="Commander Center: command palette, launchpad, notes, missions." />
   <style>
     :root{
       --bg:#0b0e14;
-      --panel:#111521;
-      --panel2:#0f1320;
+      --panel: rgba(17,21,33,.86);
+      --panel2: rgba(15,19,32,.70);
       --border:#2a2f3a;
-      --text:#e6e6e6;
+      --text:#e9e9ee;
       --muted:#b8c0ff;
       --accent:#7aa2f7;
       --good:#9ece6a;
       --warn:#e0af68;
       --bad:#f7768e;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --r:14px;
+      --r:16px;
+      --r2:12px;
     }
     *{box-sizing:border-box}
     body{
       margin:0; padding:18px;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: radial-gradient(1200px 700px at 30% -10%, #1b2755 0%, var(--bg) 60%);
+      background:
+        radial-gradient(1200px 700px at 30% -10%, #1b2755 0%, var(--bg) 60%),
+        radial-gradient(900px 600px at 85% 0%, rgba(122,162,247,.10), rgba(0,0,0,0) 60%);
       color:var(--text);
     }
-    .wrap{max-width:980px; margin:0 auto; display:flex; flex-direction:column; gap:14px;}
+    .wrap{max-width:1040px; margin:0 auto; display:flex; flex-direction:column; gap:14px;}
+
+    /* Top */
     .top{
-      background: linear-gradient(180deg, rgba(122,162,247,.18), rgba(0,0,0,0));
       border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(122,162,247,.18), rgba(0,0,0,0));
       border-radius: var(--r);
-      padding:18px;
+      padding:16px;
       box-shadow: var(--shadow);
+      display:flex; flex-direction:column; gap:10px;
     }
-    h1{margin:0 0 6px 0; font-size:1.65rem; letter-spacing:.3px}
-    .sub{color:var(--muted); margin:0; line-height:1.5}
-    .badgeRow{margin-top:10px; display:flex; flex-wrap:wrap; gap:8px}
+    .topRow{
+      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    h1{margin:0; font-size:1.6rem; letter-spacing:.25px}
+    .sub{margin:0; color:var(--muted); line-height:1.45}
+    .badgeRow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
     .badge{
       border:1px solid var(--border);
-      background: rgba(17,21,33,.7);
+      background: rgba(17,21,33,.70);
       padding:6px 10px;
       border-radius:999px;
       font-size:.85rem;
       color:var(--accent);
+      display:flex; align-items:center; gap:8px;
     }
+    .dot{width:9px;height:9px;border-radius:50%; background:var(--good); box-shadow:0 0 12px rgba(158,206,106,.55);}
+    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(122,162,247,.16);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .btn:active{transform: translateY(1px);}
+    .btn.secondary{background: rgba(15,19,32,.65);}
+    .btn.danger{background: rgba(247,118,142,.14); border-color: rgba(247,118,142,.55);}
 
-    .grid{display:grid; grid-template-columns: 1.1fr .9fr; gap:14px;}
-    @media (max-width: 820px){ .grid{grid-template-columns:1fr;} }
+    /* Layout */
+    .grid{display:grid; grid-template-columns: 1.08fr .92fr; gap:14px;}
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
 
     .card{
-      background: rgba(17,21,33,.82);
       border:1px solid var(--border);
+      background: var(--panel);
       border-radius: var(--r);
       padding:14px;
       box-shadow: var(--shadow);
     }
-    .card h2{margin:0 0 10px 0; font-size:1.05rem; color:var(--accent); letter-spacing:.2px}
-    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .card h2{margin:0; font-size:1.05rem; color:var(--accent); letter-spacing:.2px}
+    .sectionHead{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .pill{
+      font-size:.78rem; padding:4px 10px;
+      border-radius:999px; border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      color: var(--muted);
+    }
+    hr.sep{border:0;border-top:1px solid var(--border); margin:14px 0;}
 
+    /* Search */
     .searchBox{
       display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-      background: rgba(15,19,32,.75);
+      background: var(--panel2);
       border:1px solid var(--border);
       padding:10px;
+      border-radius: var(--r2);
+    }
+    input[type="text"], select, textarea{
+      border:1px solid var(--border);
+      background:#0b0f1a;
+      color:var(--text);
       border-radius: 12px;
+      outline:none;
+      font-size:1rem;
     }
     input[type="text"]{
       flex:1 1 220px;
-      padding:12px 12px;
-      border-radius: 10px;
-      border:1px solid var(--border);
-      background: #0b0f1a;
-      color:var(--text);
-      outline:none;
-      font-size:1rem;
+      padding:12px;
     }
-    select{
-      padding:12px 10px;
-      border-radius: 10px;
-      border:1px solid var(--border);
-      background: #0b0f1a;
-      color:var(--text);
-      outline:none;
-      font-size:1rem;
-    }
-    button{
-      padding:12px 14px;
-      border-radius: 10px;
-      border:1px solid var(--border);
-      background: rgba(122,162,247,.18);
-      color:var(--text);
-      font-weight:700;
-      cursor:pointer;
-    }
-    button:active{transform: translateY(1px);}
-    .tiny{font-size:.88rem; color:var(--muted); margin:10px 0 0 0; line-height:1.5}
+    select{ padding:12px 10px; }
+    .tiny{font-size:.88rem; color:var(--muted); margin:10px 0 0; line-height:1.45}
 
+    /* Buttons grid */
     .btnGrid{
       display:grid;
       grid-template-columns: repeat(3, minmax(0,1fr));
       gap:10px;
     }
-    @media (max-width: 520px){ .btnGrid{grid-template-columns: 1fr 1fr;} }
-    a.btn{
+    @media (max-width: 560px){ .btnGrid{grid-template-columns: 1fr 1fr;} }
+
+    a.tile{
       text-decoration:none;
       display:flex;
-      gap:10px;
-      align-items:center;
       justify-content:space-between;
+      align-items:center;
+      gap:10px;
       padding:12px;
-      border-radius:12px;
+      border-radius: 14px;
       border:1px solid var(--border);
-      background: rgba(15,19,32,.75);
+      background: var(--panel2);
       color:var(--text);
     }
-    a.btn:hover{border-color: rgba(122,162,247,.55);}
+    a.tile:hover{border-color: rgba(122,162,247,.55);}
     .tag{font-size:.78rem; color:var(--muted)}
-    .pill{
-      font-size:.78rem; padding:4px 8px;
-      border-radius:999px; border:1px solid var(--border);
-      color:var(--muted);
-    }
 
-    .sectionTitle{
-      display:flex; align-items:center; justify-content:space-between;
-      margin-bottom:10px;
-    }
-    .sectionTitle .right{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
-    .statusDot{
-      width:10px; height:10px; border-radius:50%;
-      background: var(--good);
-      box-shadow: 0 0 12px rgba(158,206,106,.6);
-    }
-    .footer{
-      color:var(--muted);
-      font-size:.85rem;
-      text-align:center;
-      padding:10px 0 0;
-      opacity:.95;
-    }
-    .note{
-      border-left: 3px solid rgba(122,162,247,.6);
-      padding:10px 12px;
-      background: rgba(15,19,32,.55);
-      border-radius: 10px;
-      color: var(--muted);
-      line-height:1.5;
-    }
-
-    /* UT + Notes */
+    /* Details (UT) */
     details.ut{
       border:1px solid var(--border);
-      border-radius: 12px;
-      background: rgba(15,19,32,.55);
+      border-radius: 14px;
+      background: var(--panel2);
       padding:10px 12px;
     }
     details.ut summary{
       cursor:pointer;
       color: var(--accent);
-      font-weight:800;
+      font-weight:900;
       list-style:none;
       outline:none;
     }
     details.ut summary::-webkit-details-marker{display:none;}
     .utContent{margin-top:10px; color:var(--muted); line-height:1.55}
-    .utContent b{color:var(--text)}
     .kbd{
       border:1px solid var(--border);
       border-bottom-width:2px;
@@ -175,30 +164,26 @@
       border-radius:8px;
       background: rgba(0,0,0,.25);
       color: var(--text);
-      font-weight:700;
+      font-weight:800;
       font-size:.85rem;
       display:inline-block;
       margin:0 2px;
     }
 
+    /* Notes */
     textarea{
       width:100%;
       min-height:220px;
       resize: vertical;
       padding:12px;
-      border-radius:12px;
-      border:1px solid var(--border);
-      background:#0b0f1a;
-      color:var(--text);
-      font-size:1rem;
       line-height:1.4;
-      outline:none;
     }
     .saveLine{
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      margin-top:10px; flex-wrap:wrap;
+      display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
+      margin-top:10px;
       color:var(--muted); font-size:.9rem;
     }
+    .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
     .savePill{
       border:1px solid var(--border);
       padding:4px 10px;
@@ -206,53 +191,132 @@
       background: rgba(0,0,0,.22);
       color: var(--muted);
     }
-    .danger{border-color: rgba(247,118,142,.7); background: rgba(247,118,142,.12);}
+
+    /* Editable lists */
+    .list{
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .item{
+      display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+      border:1px solid var(--border);
+      background: var(--panel2);
+      padding:10px 12px;
+      border-radius: 14px;
+    }
+    .itemLeft{display:flex; flex-direction:column; gap:2px; min-width:180px;}
+    .itemTitle{font-weight:900}
+    .itemMeta{color:var(--muted); font-size:.85rem}
+    .itemBtns{display:flex; gap:8px; flex-wrap:wrap}
+
+    /* Modal (Command Palette) */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.62);
+      display:none;
+      align-items:flex-start;
+      justify-content:center;
+      padding:18px;
+      z-index:999;
+    }
+    .modal{
+      width:min(860px, 100%);
+      margin-top:40px;
+      border:1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(17,21,33,.94);
+      box-shadow: 0 20px 60px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalTop{
+      padding:12px;
+      border-bottom:1px solid var(--border);
+      display:flex; gap:10px; align-items:center;
+    }
+    .modalTop input{
+      flex:1;
+      padding:12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background:#0b0f1a;
+      color:var(--text);
+      font-size:1rem;
+      outline:none;
+    }
+    .modalBody{
+      max-height: 60vh;
+      overflow:auto;
+      padding:10px;
+    }
+    .cmd{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      padding:12px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      background: rgba(15,19,32,.70);
+      margin-bottom:10px;
+      cursor:pointer;
+    }
+    .cmd:hover{border-color: rgba(122,162,247,.55);}
+    .cmdName{font-weight:900}
+    .cmdDesc{color:var(--muted); font-size:.86rem}
+    .cmdRight{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+    .hint{font-size:.78rem; color:var(--muted)}
+    .footer{
+      color:var(--muted);
+      font-size:.85rem;
+      text-align:center;
+      padding:10px 0 0;
+      opacity:.95;
+    }
+
+    /* Focus mode */
+    .focus .notFocus{display:none !important;}
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+  <div class="wrap" id="app">
 
     <div class="top">
-      <h1>Commander Center</h1>
-      <p class="sub">Search + launchpad + trusted tools. Minimal friction. Maximum control.</p>
+      <div class="topRow">
+        <div>
+          <h1>Commander Center</h1>
+          <p class="sub">One console. Fewer decisions. Faster launches.</p>
+        </div>
+
+        <div class="actions">
+          <button class="btn" onclick="openPalette()">⚡ Command</button>
+          <button class="btn secondary" onclick="toggleFocus()">🎯 Focus</button>
+          <button class="btn secondary" onclick="copyPublicURL()">🔗 Copy URL</button>
+        </div>
+      </div>
+
       <div class="badgeRow">
-        <span class="badge">Status: Online</span>
+        <span class="badge"><span class="dot"></span> Status: Online</span>
         <span class="badge">Mode: Operator</span>
         <span class="badge">Node: Sentinel Anchor</span>
+        <span class="badge" id="clockBadge">Time: —</span>
+        <span class="badge" id="saveBadge">Notes: Ready</span>
       </div>
     </div>
 
-    <!-- UT GUIDE (collapsible) -->
-    <details class="ut">
-      <summary>UT Guide — How to Use This Console (tap to open)</summary>
+    <details class="ut notFocus">
+      <summary>UT Guide — tap to open (built for low-energy days)</summary>
       <div class="utContent">
-        <p><b>What this is:</b> a launch console. You don’t “browse” it — you <b>deploy</b> from it.</p>
-
-        <p><b>Fast use:</b> type in the search box → pick engine → hit <span class="kbd">Search</span> (or <span class="kbd">Enter</span>).</p>
-
-        <p><b>Quick Launch:</b> one-tap trusted tools. Use these when you’re unsure, tired, or in “fix mode.”</p>
-
-        <p><b>Notes/Journal Mode:</b> write anything. It <b>auto-saves on this device</b>. No accounts.</p>
-
-        <p><b>Operator Rules:</b><br>
-          1) Keep it simple. Add 1 feature at a time.<br>
-          2) If something breaks, you can always revert in GitHub history.<br>
-          3) This page is designed for low-energy days. Minimal decisions.
-        </p>
+        <p><b>Use pattern:</b> Search → Launch tool → Write note → Done.</p>
+        <p><b>Command palette:</b> hit <span class="kbd">⚡</span> or <span class="kbd">Ctrl</span>+<span class="kbd">K</span> for instant actions.</p>
+        <p><b>Notes:</b> auto-save is local to this device. Use <b>Export</b> to back up.</p>
+        <p><b>Pinned Links:</b> edit on-page. No code required.</p>
       </div>
     </details>
 
     <div class="grid">
 
-      <!-- LEFT: Search + Quick Launch -->
-      <div class="card">
-        <div class="sectionTitle">
+      <!-- LEFT -->
+      <div class="card" id="left">
+        <div class="sectionHead">
           <h2>Search Console</h2>
-          <div class="right">
-            <span class="statusDot" title="Ready"></span>
-            <span class="pill">Ready</span>
-          </div>
+          <span class="pill">Enter to search</span>
         </div>
 
         <div class="searchBox">
@@ -266,101 +330,116 @@
             <option value="github">GitHub</option>
             <option value="wikipedia">Wikipedia</option>
           </select>
-          <button onclick="doSearch()">Search</button>
+          <button class="btn" onclick="doSearch()">Search</button>
         </div>
 
-        <p class="tiny">Tip: Press <b>Enter</b> to search. Change engines with the dropdown.</p>
+        <p class="tiny notFocus">Tip: Use the command palette for “open VirusTotal / HIBP / Shodan” without scrolling.</p>
 
-        <hr style="border:0;border-top:1px solid var(--border); margin:14px 0;">
+        <hr class="sep">
 
-        <div class="sectionTitle">
+        <div class="sectionHead">
           <h2>Quick Launch</h2>
-          <div class="right"><span class="pill">One-tap tools</span></div>
+          <span class="pill">Trusted tools</span>
         </div>
 
         <div class="btnGrid">
-          <a class="btn" href="https://www.virustotal.com/gui/home/upload" target="_blank" rel="noopener">
+          <a class="tile" href="https://www.virustotal.com/gui/home/upload" target="_blank" rel="noopener">
             <span>VirusTotal</span><span class="tag">scan file/url</span>
           </a>
-          <a class="btn" href="https://haveibeenpwned.com/" target="_blank" rel="noopener">
+          <a class="tile" href="https://haveibeenpwned.com/" target="_blank" rel="noopener">
             <span>HIBP</span><span class="tag">email breach</span>
           </a>
-          <a class="btn" href="https://urlscan.io/" target="_blank" rel="noopener">
+          <a class="tile" href="https://urlscan.io/" target="_blank" rel="noopener">
             <span>urlscan.io</span><span class="tag">url intel</span>
           </a>
-
-          <a class="btn" href="https://www.shodan.io/" target="_blank" rel="noopener">
+          <a class="tile" href="https://www.shodan.io/" target="_blank" rel="noopener">
             <span>Shodan</span><span class="tag">device search</span>
           </a>
-          <a class="btn" href="https://www.google.com/advanced_search" target="_blank" rel="noopener">
-            <span>Google Adv.</span><span class="tag">precision</span>
-          </a>
-          <a class="btn" href="https://www.whois.com/whois/" target="_blank" rel="noopener">
+          <a class="tile" href="https://www.whois.com/whois/" target="_blank" rel="noopener">
             <span>WHOIS</span><span class="tag">domain info</span>
           </a>
-
-          <a class="btn" href="https://www.speedtest.net/" target="_blank" rel="noopener">
+          <a class="tile" href="https://www.google.com/advanced_search" target="_blank" rel="noopener">
+            <span>Google Adv.</span><span class="tag">precision</span>
+          </a>
+          <a class="tile" href="https://www.speedtest.net/" target="_blank" rel="noopener">
             <span>Speedtest</span><span class="tag">network</span>
           </a>
-          <a class="btn" href="https://www.bleepingcomputer.com/" target="_blank" rel="noopener">
+          <a class="tile" href="https://www.bleepingcomputer.com/" target="_blank" rel="noopener">
             <span>Bleeping</span><span class="tag">fix guides</span>
           </a>
-          <a class="btn" href="https://www.microsoft.com/en-us/windows/security" target="_blank" rel="noopener">
+          <a class="tile" href="https://www.microsoft.com/en-us/windows/security" target="_blank" rel="noopener">
             <span>Windows Sec</span><span class="tag">official</span>
           </a>
         </div>
 
-        <div style="margin-top:12px" class="note">
-          <b>Operator note:</b> This page is intentionally “static + strong.” It won’t break easily. It’s a launchpad you can grow slowly.
+        <hr class="sep notFocus">
+
+        <div class="sectionHead notFocus">
+          <h2>Mission Slots</h2>
+          <span class="pill">Local list</span>
         </div>
+
+        <div class="list notFocus" id="missionList"></div>
+
+        <div class="row notFocus" style="margin-top:10px">
+          <button class="btn secondary" onclick="addMission()">➕ Add mission</button>
+          <button class="btn danger" onclick="clearMissions()">Clear missions</button>
+        </div>
+
+        <p class="tiny notFocus">Missions are saved on this device. Keep them short: “Fix X”, “Build Y”, “Call Z”.</p>
       </div>
 
-      <!-- RIGHT: Notes + Links -->
-      <div class="card">
-        <div class="sectionTitle">
-          <h2>Notes / Journal Mode</h2>
-          <div class="right">
-            <span class="savePill" id="saveState">Not loaded</span>
-          </div>
+      <!-- RIGHT -->
+      <div class="card" id="right">
+        <div class="sectionHead">
+          <h2>Notes / Journal</h2>
+          <span class="savePill" id="saveState">Ready</span>
         </div>
 
-        <textarea id="notes" placeholder="Drop anything here: plans, reminders, thoughts, drafts. Auto-saves on this device."></textarea>
+        <textarea id="notes" placeholder="Drop anything here. Auto-saves on this device."></textarea>
 
         <div class="saveLine">
           <div>Last saved: <b id="lastSaved">—</b></div>
           <div class="row">
-            <button onclick="exportNotes()">Export .txt</button>
-            <button class="danger" onclick="clearNotes()">Clear</button>
+            <button class="btn secondary" onclick="stampLine()">🕒 Stamp</button>
+            <button class="btn secondary" onclick="dailyTemplate()">📅 Daily</button>
+            <button class="btn secondary" onclick="exportNotes()">Export</button>
+            <button class="btn secondary" onclick="importNotes()">Import</button>
+            <button class="btn danger" onclick="clearNotes()">Clear</button>
           </div>
         </div>
 
-        <hr style="border:0;border-top:1px solid var(--border); margin:14px 0;">
+        <hr class="sep">
 
-        <h2>My Links (edit anytime)</h2>
-        <div class="btnGrid" style="grid-template-columns: 1fr;">
-          <a class="btn" href="#" onclick="alert('Edit index.html and replace this link with your real one.'); return false;">
-            <span>Victoria ❤️</span><span class="tag">add link</span>
-          </a>
-          <a class="btn" href="#" onclick="alert('Put your Discord/Linktree/YouTube here later.'); return false;">
-            <span>Crow-Tech Hub</span><span class="tag">add link</span>
-          </a>
-          <a class="btn" href="https://github.com/CyberCrow111/sentinel-anchor" target="_blank" rel="noopener">
+        <div class="sectionHead">
+          <h2>Pinned Links</h2>
+          <span class="pill">Editable</span>
+        </div>
+
+        <div class="list" id="pinList"></div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn secondary" onclick="addPin()">➕ Add link</button>
+          <button class="btn danger" onclick="clearPins()">Clear links</button>
+        </div>
+
+        <hr class="sep notFocus">
+
+        <div class="sectionHead notFocus">
+          <h2>Core Links</h2>
+          <span class="pill">Always available</span>
+        </div>
+
+        <div class="btnGrid notFocus" style="grid-template-columns: 1fr;">
+          <a class="tile" href="https://github.com/CyberCrow111/sentinel-anchor" target="_blank" rel="noopener">
             <span>Control Panel</span><span class="tag">repo</span>
           </a>
-          <a class="btn" href="https://cybercrow111.github.io/sentinel-anchor/" target="_blank" rel="noopener">
+          <a class="tile" href="https://cybercrow111.github.io/sentinel-anchor/" target="_blank" rel="noopener">
             <span>Public Site</span><span class="tag">live</span>
           </a>
         </div>
 
-        <hr style="border:0;border-top:1px solid var(--border); margin:14px 0;">
-
-        <h2>Quick Actions</h2>
-        <div class="row">
-          <button onclick="copyLink()">Copy Public URL</button>
-          <button onclick="focusSearch()">Focus Search</button>
-        </div>
-
-        <p class="tiny">Notes auto-save locally on this device. Export if you want a backup file.</p>
+        <p class="tiny notFocus">Tip: set this page as your browser home/start page later. That’s max leverage.</p>
       </div>
 
     </div>
@@ -371,11 +450,58 @@
 
   </div>
 
+  <!-- Command Palette -->
+  <div class="overlay" id="overlay" onclick="overlayClick(event)">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Command Palette" onclick="event.stopPropagation()">
+      <div class="modalTop">
+        <input id="cmdInput" type="text" placeholder="Type a command: 'virustotal', 'hibp', 'search github', 'focus'..." autocomplete="off" />
+        <button class="btn secondary" onclick="closePalette()">Esc</button>
+      </div>
+      <div class="modalBody" id="cmdList"></div>
+      <div style="padding: 0 12px 12px;">
+        <div class="hint">Shortcuts: <span class="kbd">Ctrl</span>+<span class="kbd">K</span> opens · <span class="kbd">Esc</span> closes · Enter runs first match</div>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="importFile" accept=".txt" style="display:none" />
+
   <script>
-    // ---- Search ----
+    // ----------------------------
+    // Config / Keys (local device)
+    // ----------------------------
+    const NOTES_KEY = 'cc_notes_v2';
+    const TIME_KEY  = 'cc_notes_time_v2';
+    const PINS_KEY  = 'cc_pins_v2';
+    const MISS_KEY  = 'cc_missions_v2';
+    const FOCUS_KEY = 'cc_focus_v2';
+
+    // ----------------------------
+    // Helpers
+    // ----------------------------
+    function nowStamp(){ return new Date().toLocaleString(); }
+    function safeJSONParse(s, fallback){
+      try{ return JSON.parse(s); } catch(e){ return fallback; }
+    }
+    function open(url){ window.open(url, '_blank', 'noopener'); }
+
+    // ----------------------------
+    // Clock
+    // ----------------------------
+    const clockBadge = document.getElementById('clockBadge');
+    function tickClock(){
+      const d = new Date();
+      clockBadge.textContent = 'Time: ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+    setInterval(tickClock, 1000*15);
+    tickClock();
+
+    // ----------------------------
+    // Search
+    // ----------------------------
     function doSearch(){
       const q = (document.getElementById('q').value || '').trim();
-      if(!q){ focusSearch(); return; }
+      if(!q){ document.getElementById('q').focus(); return; }
       const engine = document.getElementById('engine').value;
       const encoded = encodeURIComponent(q);
 
@@ -388,55 +514,50 @@
         github:   `https://github.com/search?q=${encoded}`,
         wikipedia:`https://en.wikipedia.org/wiki/Special:Search?search=${encoded}`
       };
-
-      window.open(urls[engine] || urls.google, '_blank', 'noopener');
+      open(urls[engine] || urls.google);
     }
-    function focusSearch(){ document.getElementById('q').focus(); }
+    document.addEventListener('keydown', (e)=>{
+      const active = document.activeElement;
+      if(e.key === 'Enter' && active && active.id === 'q'){ doSearch(); }
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
+        e.preventDefault(); openPalette();
+      }
+      if(e.key === 'Escape'){ closePalette(); }
+    });
 
-    // ---- Copy URL ----
-    function copyLink(){
+    // ----------------------------
+    // Copy URL
+    // ----------------------------
+    function copyPublicURL(){
       const url = window.location.href;
       if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(url).then(()=>alert('Copied: ' + url))
+        navigator.clipboard.writeText(url).then(()=>toast('Copied URL'))
           .catch(()=>fallbackCopy(url));
-      } else {
-        fallbackCopy(url);
-      }
+      } else fallbackCopy(url);
     }
     function fallbackCopy(text){
       const ta = document.createElement('textarea');
       ta.value = text;
       document.body.appendChild(ta);
       ta.select();
-      try{ document.execCommand('copy'); alert('Copied: ' + text); }
-      catch(e){ alert('Copy failed. Here it is: ' + text); }
+      try{ document.execCommand('copy'); toast('Copied URL'); }
+      catch(e){ alert('Copy failed: ' + text); }
       document.body.removeChild(ta);
     }
 
-    // Enter key triggers search when cursor is in search box
-    document.addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter'){
-        const active = document.activeElement;
-        if(active && active.id === 'q'){ doSearch(); }
-      }
-    });
-
-    // ---- Notes / Journal (local device storage) ----
-    const NOTES_KEY = 'commander_center_notes_v1';
-    const TIME_KEY  = 'commander_center_notes_time_v1';
+    // ----------------------------
+    // Notes
+    // ----------------------------
     const notesEl = document.getElementById('notes');
     const lastSavedEl = document.getElementById('lastSaved');
     const saveStateEl = document.getElementById('saveState');
+    const saveBadge = document.getElementById('saveBadge');
+    let saveTimer = null;
 
-    function nowStamp(){
-      const d = new Date();
-      return d.toLocaleString();
-    }
-
-    function setSavedUI(stamp){
-      lastSavedEl.textContent = stamp || '—';
-      saveStateEl.textContent = stamp ? 'Saved' : 'Ready';
-      saveStateEl.classList.remove('danger');
+    function setSaveUI(state, stamp){
+      saveStateEl.textContent = state;
+      saveBadge.textContent = 'Notes: ' + state;
+      if(stamp) lastSavedEl.textContent = stamp;
     }
 
     function loadNotes(){
@@ -444,32 +565,48 @@
         const txt = localStorage.getItem(NOTES_KEY) || '';
         const t = localStorage.getItem(TIME_KEY) || '';
         notesEl.value = txt;
-        setSavedUI(t || (txt ? 'Loaded' : 'Ready'));
+        setSaveUI('Ready', t || '—');
         if(t) lastSavedEl.textContent = t;
-        else if(txt) lastSavedEl.textContent = 'Loaded (no timestamp)';
+        else if(txt) lastSavedEl.textContent = 'Loaded';
       } catch(e){
-        saveStateEl.textContent = 'Storage blocked';
-        saveStateEl.classList.add('danger');
+        setSaveUI('Storage blocked', '—');
       }
     }
-
-    let saveTimer = null;
     function scheduleSave(){
-      saveStateEl.textContent = 'Saving…';
+      setSaveUI('Saving…');
       clearTimeout(saveTimer);
       saveTimer = setTimeout(saveNotes, 450);
     }
-
     function saveNotes(){
       const stamp = nowStamp();
       try{
         localStorage.setItem(NOTES_KEY, notesEl.value);
         localStorage.setItem(TIME_KEY, stamp);
-        setSavedUI(stamp);
+        setSaveUI('Saved', stamp);
       } catch(e){
-        saveStateEl.textContent = 'Save failed';
-        saveStateEl.classList.add('danger');
+        setSaveUI('Save failed', lastSavedEl.textContent || '—');
       }
+    }
+    notesEl.addEventListener('input', scheduleSave);
+
+    function stampLine(){
+      const stamp = '\n[' + nowStamp() + '] ';
+      insertAtCursor(notesEl, stamp);
+      scheduleSave();
+    }
+    function dailyTemplate(){
+      const d = new Date();
+      const date = d.toLocaleDateString();
+      const template =
+`[Daily Log — ${date}]
+Mission: 
+Wins:
+Needs:
+Notes:
+Next:
+---\n`;
+      insertAtCursor(notesEl, '\n' + template);
+      scheduleSave();
     }
 
     function exportNotes(){
@@ -479,29 +616,340 @@
       const blob = new Blob([content], {type:'text/plain'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      toast('Exported');
     }
 
+    function importNotes(){
+      document.getElementById('importFile').click();
+    }
+    document.getElementById('importFile').addEventListener('change', async (e)=>{
+      const file = e.target.files && e.target.files[0];
+      if(!file) return;
+      const text = await file.text();
+      notesEl.value = text;
+      saveNotes();
+      toast('Imported');
+      e.target.value = '';
+    });
+
     function clearNotes(){
-      const ok = confirm('Clear notes on this device? (You can Export first.)');
+      const ok = confirm('Clear notes on this device? (Export first if needed.)');
       if(!ok) return;
       notesEl.value = '';
       try{
         localStorage.removeItem(NOTES_KEY);
         localStorage.removeItem(TIME_KEY);
       } catch(e){}
-      setSavedUI('—');
+      setSaveUI('Ready', '—');
+      toast('Cleared');
     }
 
-    notesEl.addEventListener('input', scheduleSave);
+    function insertAtCursor(el, text) {
+      const start = el.selectionStart || 0;
+      const end = el.selectionEnd || 0;
+      const before = el.value.substring(0, start);
+      const after  = el.value.substring(end);
+      el.value = before + text + after;
+      const pos = start + text.length;
+      el.setSelectionRange(pos, pos);
+      el.focus();
+    }
 
+    // ----------------------------
+    // Pinned Links (editable on-page)
+    // ----------------------------
+    const pinList = document.getElementById('pinList');
+
+    function defaultPins(){
+      return [
+        {name:'Victoria ❤️', url:'', note:'tap to set'},
+        {name:'Crow-Tech Hub', url:'', note:'tap to set'},
+      ];
+    }
+
+    function loadPins(){
+      const raw = localStorage.getItem(PINS_KEY);
+      const pins = raw ? safeJSONParse(raw, defaultPins()) : defaultPins();
+      renderPins(pins);
+    }
+    function savePins(pins){
+      localStorage.setItem(PINS_KEY, JSON.stringify(pins));
+    }
+    function renderPins(pins){
+      pinList.innerHTML = '';
+      pins.forEach((p, idx)=>{
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="itemLeft">
+            <div class="itemTitle">${escapeHTML(p.name || 'Untitled')}</div>
+            <div class="itemMeta">${escapeHTML(p.url ? p.url : (p.note || 'No URL set'))}</div>
+          </div>
+          <div class="itemBtns">
+            <button class="btn secondary" onclick="openPin(${idx})">Open</button>
+            <button class="btn secondary" onclick="editPin(${idx})">Edit</button>
+            <button class="btn danger" onclick="deletePin(${idx})">Del</button>
+          </div>
+        `;
+        pinList.appendChild(div);
+      });
+      savePins(pins);
+    }
+    function getPins(){
+      const raw = localStorage.getItem(PINS_KEY);
+      return raw ? safeJSONParse(raw, defaultPins()) : defaultPins();
+    }
+    function openPin(i){
+      const pins = getPins();
+      const p = pins[i];
+      if(!p || !p.url){ toast('No URL set'); return; }
+      open(p.url);
+    }
+    function editPin(i){
+      const pins = getPins();
+      const p = pins[i] || {name:'', url:'', note:''};
+      const name = prompt('Link name:', p.name || '');
+      if(name === null) return;
+      const url = prompt('URL (include https://):', p.url || '');
+      if(url === null) return;
+      const note = prompt('Short note (optional):', p.note || '');
+      pins[i] = {name: name.trim(), url: url.trim(), note: (note||'').trim()};
+      renderPins(pins);
+      toast('Saved link');
+    }
+    function addPin(){
+      const pins = getPins();
+      pins.push({name:'New Link', url:'', note:'tap Edit'});
+      renderPins(pins);
+      toast('Added');
+    }
+    function deletePin(i){
+      const ok = confirm('Delete this pinned link?');
+      if(!ok) return;
+      const pins = getPins();
+      pins.splice(i,1);
+      renderPins(pins);
+      toast('Deleted');
+    }
+    function clearPins(){
+      const ok = confirm('Clear all pinned links on this device?');
+      if(!ok) return;
+      localStorage.removeItem(PINS_KEY);
+      loadPins();
+      toast('Cleared');
+    }
+
+    // ----------------------------
+    // Missions (editable list)
+    // ----------------------------
+    const missionList = document.getElementById('missionList');
+
+    function defaultMissions(){
+      return [
+        {t:'Add one link', d:'Pinned Links → Edit'},
+        {t:'Write a daily log', d:'Notes → Daily'},
+        {t:'Run a safety check', d:'VirusTotal / HIBP'}
+      ];
+    }
+    function getMissions(){
+      const raw = localStorage.getItem(MISS_KEY);
+      return raw ? safeJSONParse(raw, defaultMissions()) : defaultMissions();
+    }
+    function saveMissions(m){
+      localStorage.setItem(MISS_KEY, JSON.stringify(m));
+    }
+    function renderMissions(m){
+      missionList.innerHTML = '';
+      m.forEach((x, idx)=>{
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.innerHTML = `
+          <div class="itemLeft">
+            <div class="itemTitle">${escapeHTML(x.t || 'Untitled')}</div>
+            <div class="itemMeta">${escapeHTML(x.d || '')}</div>
+          </div>
+          <div class="itemBtns">
+            <button class="btn secondary" onclick="editMission(${idx})">Edit</button>
+            <button class="btn danger" onclick="deleteMission(${idx})">Del</button>
+          </div>
+        `;
+        missionList.appendChild(div);
+      });
+      saveMissions(m);
+    }
+    function addMission(){
+      const m = getMissions();
+      const t = prompt('Mission title (short):', 'New mission');
+      if(t === null) return;
+      const d = prompt('Details (optional):', '');
+      if(d === null) return;
+      m.push({t: t.trim(), d: d.trim()});
+      renderMissions(m);
+      toast('Mission added');
+    }
+    function editMission(i){
+      const m = getMissions();
+      const x = m[i];
+      const t = prompt('Mission title:', x.t || '');
+      if(t === null) return;
+      const d = prompt('Details:', x.d || '');
+      if(d === null) return;
+      m[i] = {t: t.trim(), d: d.trim()};
+      renderMissions(m);
+      toast('Saved');
+    }
+    function deleteMission(i){
+      const ok = confirm('Delete mission?');
+      if(!ok) return;
+      const m = getMissions();
+      m.splice(i,1);
+      renderMissions(m);
+      toast('Deleted');
+    }
+    function clearMissions(){
+      const ok = confirm('Clear missions on this device?');
+      if(!ok) return;
+      localStorage.removeItem(MISS_KEY);
+      renderMissions(defaultMissions());
+      toast('Cleared');
+    }
+
+    // ----------------------------
+    // Focus Mode
+    // ----------------------------
+    function toggleFocus(){
+      const app = document.getElementById('app');
+      const on = !app.classList.contains('focus');
+      if(on) app.classList.add('focus'); else app.classList.remove('focus');
+      localStorage.setItem(FOCUS_KEY, on ? '1' : '0');
+      toast(on ? 'Focus ON' : 'Focus OFF');
+    }
+    (function loadFocus(){
+      const on = localStorage.getItem(FOCUS_KEY) === '1';
+      if(on) document.getElementById('app').classList.add('focus');
+    })();
+
+    // ----------------------------
+    // Command Palette
+    // ----------------------------
+    const overlay = document.getElementById('overlay');
+    const cmdInput = document.getElementById('cmdInput');
+    const cmdList = document.getElementById('cmdList');
+
+    const COMMANDS = [
+      {name:'Search (use typed query)', desc:'Runs search using the selected engine', run:()=>doSearch()},
+      {name:'Focus mode', desc:'Toggle Focus mode', run:()=>toggleFocus()},
+      {name:'Stamp in notes', desc:'Insert timestamp line', run:()=>stampLine()},
+      {name:'Daily template', desc:'Insert daily log template', run:()=>dailyTemplate()},
+      {name:'Export notes', desc:'Download notes as .txt', run:()=>exportNotes()},
+      {name:'Import notes', desc:'Load notes from .txt', run:()=>importNotes()},
+      {name:'VirusTotal', desc:'Scan suspicious files/links', run:()=>open('https://www.virustotal.com/gui/home/upload')},
+      {name:'Have I Been Pwned', desc:'Check email breaches', run:()=>open('https://haveibeenpwned.com/')},
+      {name:'urlscan.io', desc:'URL analysis', run:()=>open('https://urlscan.io/')},
+      {name:'Shodan', desc:'Internet-exposed devices', run:()=>open('https://www.shodan.io/')},
+      {name:'WHOIS', desc:'Domain lookup', run:()=>open('https://www.whois.com/whois/')},
+      {name:'Google Advanced Search', desc:'Precision search', run:()=>open('https://www.google.com/advanced_search')},
+      {name:'Speedtest', desc:'Network test', run:()=>open('https://www.speedtest.net/')},
+      {name:'BleepingComputer', desc:'Fix guides', run:()=>open('https://www.bleepingcomputer.com/')},
+      {name:'Control Panel', desc:'Open GitHub repo', run:()=>open('https://github.com/CyberCrow111/sentinel-anchor')},
+      {name:'Public Site', desc:'Open public site', run:()=>open('https://cybercrow111.github.io/sentinel-anchor/')},
+      {name:'Add mission', desc:'Create a mission item', run:()=>addMission()},
+      {name:'Add pinned link', desc:'Create a pinned link', run:()=>addPin()},
+    ];
+
+    function openPalette(){
+      overlay.style.display = 'flex';
+      renderCommands('');
+      setTimeout(()=>{ cmdInput.value=''; cmdInput.focus(); }, 20);
+    }
+    function closePalette(){
+      overlay.style.display = 'none';
+    }
+    function overlayClick(e){
+      if(e.target === overlay) closePalette();
+    }
+
+    function renderCommands(filter){
+      const f = (filter || '').toLowerCase().trim();
+      const q = (document.getElementById('q').value || '').trim();
+      let list = COMMANDS.slice();
+
+      // Smart extra commands based on search box text
+      if(q){
+        list.unshift(
+          {name:`Search Google: ${q}`, desc:'Open Google search for current query', run:()=>open('https://www.google.com/search?q='+encodeURIComponent(q))},
+          {name:`Search GitHub: ${q}`, desc:'Open GitHub search for current query', run:()=>open('https://github.com/search?q='+encodeURIComponent(q))},
+          {name:`Search Reddit: ${q}`, desc:'Open Reddit search for current query', run:()=>open('https://www.reddit.com/search/?q='+encodeURIComponent(q))}
+        );
+      }
+
+      const filtered = !f ? list : list.filter(c =>
+        c.name.toLowerCase().includes(f) || (c.desc||'').toLowerCase().includes(f)
+      );
+
+      cmdList.innerHTML = '';
+      filtered.slice(0, 24).forEach((c, idx)=>{
+        const div = document.createElement('div');
+        div.className = 'cmd';
+        div.tabIndex = 0;
+        div.innerHTML = `
+          <div>
+            <div class="cmdName">${escapeHTML(c.name)}</div>
+            <div class="cmdDesc">${escapeHTML(c.desc || '')}</div>
+          </div>
+          <div class="cmdRight">
+            <span class="pill">Run</span>
+          </div>
+        `;
+        div.onclick = ()=>{ c.run(); closePalette(); };
+        cmdList.appendChild(div);
+      });
+
+      // Enter runs first match
+      cmdInput.onkeydown = (e)=>{
+        if(e.key === 'Enter'){
+          const first = filtered[0];
+          if(first){ first.run(); closePalette(); }
+        }
+      };
+    }
+
+    cmdInput.addEventListener('input', (e)=>renderCommands(e.target.value));
+
+    // ----------------------------
+    // Toast (tiny feedback)
+    // ----------------------------
+    let toastTimer = null;
+    function toast(msg){
+      clearTimeout(toastTimer);
+      const b = document.getElementById('saveBadge');
+      const old = b.textContent;
+      b.textContent = msg;
+      toastTimer = setTimeout(()=>{ b.textContent = old; }, 1500);
+    }
+
+    // ----------------------------
+    // Escape HTML
+    // ----------------------------
+    function escapeHTML(s){
+      return String(s).replace(/[&<>"']/g, (c)=>({
+        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
+      }[c]));
+    }
+
+    // ----------------------------
     // Boot
+    // ----------------------------
     loadNotes();
+    loadPins();
+    renderMissions(getMissions());
+
+    // If user types, keep save state accurate
+    // (initial state already set by loadNotes)
   </script>
 </body>
 </html>
