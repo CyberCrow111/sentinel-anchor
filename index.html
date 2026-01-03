@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Commander Center</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Commander Center: search + tools + launchpad." />
+  <meta name="description" content="Commander Center: search + tools + launchpad + notes." />
 
   <style>
     :root{
@@ -150,6 +150,63 @@
       color: var(--muted);
       line-height:1.5;
     }
+
+    /* UT + Notes */
+    details.ut{
+      border:1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(15,19,32,.55);
+      padding:10px 12px;
+    }
+    details.ut summary{
+      cursor:pointer;
+      color: var(--accent);
+      font-weight:800;
+      list-style:none;
+      outline:none;
+    }
+    details.ut summary::-webkit-details-marker{display:none;}
+    .utContent{margin-top:10px; color:var(--muted); line-height:1.55}
+    .utContent b{color:var(--text)}
+    .kbd{
+      border:1px solid var(--border);
+      border-bottom-width:2px;
+      padding:2px 8px;
+      border-radius:8px;
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      font-weight:700;
+      font-size:.85rem;
+      display:inline-block;
+      margin:0 2px;
+    }
+
+    textarea{
+      width:100%;
+      min-height:220px;
+      resize: vertical;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:#0b0f1a;
+      color:var(--text);
+      font-size:1rem;
+      line-height:1.4;
+      outline:none;
+    }
+    .saveLine{
+      display:flex; justify-content:space-between; align-items:center; gap:10px;
+      margin-top:10px; flex-wrap:wrap;
+      color:var(--muted); font-size:.9rem;
+    }
+    .savePill{
+      border:1px solid var(--border);
+      padding:4px 10px;
+      border-radius:999px;
+      background: rgba(0,0,0,.22);
+      color: var(--muted);
+    }
+    .danger{border-color: rgba(247,118,142,.7); background: rgba(247,118,142,.12);}
   </style>
 </head>
 
@@ -165,6 +222,26 @@
         <span class="badge">Node: Sentinel Anchor</span>
       </div>
     </div>
+
+    <!-- UT GUIDE (collapsible) -->
+    <details class="ut">
+      <summary>UT Guide — How to Use This Console (tap to open)</summary>
+      <div class="utContent">
+        <p><b>What this is:</b> a launch console. You don’t “browse” it — you <b>deploy</b> from it.</p>
+
+        <p><b>Fast use:</b> type in the search box → pick engine → hit <span class="kbd">Search</span> (or <span class="kbd">Enter</span>).</p>
+
+        <p><b>Quick Launch:</b> one-tap trusted tools. Use these when you’re unsure, tired, or in “fix mode.”</p>
+
+        <p><b>Notes/Journal Mode:</b> write anything. It <b>auto-saves on this device</b>. No accounts.</p>
+
+        <p><b>Operator Rules:</b><br>
+          1) Keep it simple. Add 1 feature at a time.<br>
+          2) If something breaks, you can always revert in GitHub history.<br>
+          3) This page is designed for low-energy days. Minimal decisions.
+        </p>
+      </div>
+    </details>
 
     <div class="grid">
 
@@ -238,8 +315,27 @@
         </div>
       </div>
 
-      <!-- RIGHT: Your Links + Projects -->
+      <!-- RIGHT: Notes + Links -->
       <div class="card">
+        <div class="sectionTitle">
+          <h2>Notes / Journal Mode</h2>
+          <div class="right">
+            <span class="savePill" id="saveState">Not loaded</span>
+          </div>
+        </div>
+
+        <textarea id="notes" placeholder="Drop anything here: plans, reminders, thoughts, drafts. Auto-saves on this device."></textarea>
+
+        <div class="saveLine">
+          <div>Last saved: <b id="lastSaved">—</b></div>
+          <div class="row">
+            <button onclick="exportNotes()">Export .txt</button>
+            <button class="danger" onclick="clearNotes()">Clear</button>
+          </div>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--border); margin:14px 0;">
+
         <h2>My Links (edit anytime)</h2>
         <div class="btnGrid" style="grid-template-columns: 1fr;">
           <a class="btn" href="#" onclick="alert('Edit index.html and replace this link with your real one.'); return false;">
@@ -258,26 +354,13 @@
 
         <hr style="border:0;border-top:1px solid var(--border); margin:14px 0;">
 
-        <h2>Mission Slots (placeholders)</h2>
-        <div class="note">
-          Add these later as separate pages:
-          <ul style="margin:8px 0 0 18px; color: var(--muted);">
-            <li>/tools.html — your curated toolbox</li>
-            <li>/notes.html — your field manual</li>
-            <li>/privacy.html — for ads later</li>
-            <li>/game.html — mini browser game</li>
-          </ul>
-        </div>
-
-        <hr style="border:0;border-top:1px solid var(--border); margin:14px 0;">
-
         <h2>Quick Actions</h2>
         <div class="row">
           <button onclick="copyLink()">Copy Public URL</button>
           <button onclick="focusSearch()">Focus Search</button>
         </div>
 
-        <p class="tiny">Everything here is editable by simple copy/paste. No maintenance required.</p>
+        <p class="tiny">Notes auto-save locally on this device. Export if you want a backup file.</p>
       </div>
 
     </div>
@@ -289,6 +372,7 @@
   </div>
 
   <script>
+    // ---- Search ----
     function doSearch(){
       const q = (document.getElementById('q').value || '').trim();
       if(!q){ focusSearch(); return; }
@@ -307,9 +391,9 @@
 
       window.open(urls[engine] || urls.google, '_blank', 'noopener');
     }
-
     function focusSearch(){ document.getElementById('q').focus(); }
 
+    // ---- Copy URL ----
     function copyLink(){
       const url = window.location.href;
       if(navigator.clipboard && navigator.clipboard.writeText){
@@ -319,7 +403,6 @@
         fallbackCopy(url);
       }
     }
-
     function fallbackCopy(text){
       const ta = document.createElement('textarea');
       ta.value = text;
@@ -330,7 +413,7 @@
       document.body.removeChild(ta);
     }
 
-    // Enter key triggers search
+    // Enter key triggers search when cursor is in search box
     document.addEventListener('keydown', (e)=>{
       if(e.key === 'Enter'){
         const active = document.activeElement;
@@ -338,8 +421,87 @@
       }
     });
 
-    // Auto-focus search on load (nice on desktop; fine on mobile)
-    window.addEventListener('load', ()=>{ /* focusSearch(); */ });
+    // ---- Notes / Journal (local device storage) ----
+    const NOTES_KEY = 'commander_center_notes_v1';
+    const TIME_KEY  = 'commander_center_notes_time_v1';
+    const notesEl = document.getElementById('notes');
+    const lastSavedEl = document.getElementById('lastSaved');
+    const saveStateEl = document.getElementById('saveState');
+
+    function nowStamp(){
+      const d = new Date();
+      return d.toLocaleString();
+    }
+
+    function setSavedUI(stamp){
+      lastSavedEl.textContent = stamp || '—';
+      saveStateEl.textContent = stamp ? 'Saved' : 'Ready';
+      saveStateEl.classList.remove('danger');
+    }
+
+    function loadNotes(){
+      try{
+        const txt = localStorage.getItem(NOTES_KEY) || '';
+        const t = localStorage.getItem(TIME_KEY) || '';
+        notesEl.value = txt;
+        setSavedUI(t || (txt ? 'Loaded' : 'Ready'));
+        if(t) lastSavedEl.textContent = t;
+        else if(txt) lastSavedEl.textContent = 'Loaded (no timestamp)';
+      } catch(e){
+        saveStateEl.textContent = 'Storage blocked';
+        saveStateEl.classList.add('danger');
+      }
+    }
+
+    let saveTimer = null;
+    function scheduleSave(){
+      saveStateEl.textContent = 'Saving…';
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveNotes, 450);
+    }
+
+    function saveNotes(){
+      const stamp = nowStamp();
+      try{
+        localStorage.setItem(NOTES_KEY, notesEl.value);
+        localStorage.setItem(TIME_KEY, stamp);
+        setSavedUI(stamp);
+      } catch(e){
+        saveStateEl.textContent = 'Save failed';
+        saveStateEl.classList.add('danger');
+      }
+    }
+
+    function exportNotes(){
+      const content = notesEl.value || '';
+      const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+      const filename = `commander-notes-${stamp}.txt`;
+      const blob = new Blob([content], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function clearNotes(){
+      const ok = confirm('Clear notes on this device? (You can Export first.)');
+      if(!ok) return;
+      notesEl.value = '';
+      try{
+        localStorage.removeItem(NOTES_KEY);
+        localStorage.removeItem(TIME_KEY);
+      } catch(e){}
+      setSavedUI('—');
+    }
+
+    notesEl.addEventListener('input', scheduleSave);
+
+    // Boot
+    loadNotes();
   </script>
 </body>
 </html>
