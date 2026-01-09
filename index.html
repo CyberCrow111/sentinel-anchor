@@ -1,955 +1,984 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Commander Center</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Commander Center: command palette, launchpad, notes, missions." />
-  <style>
-    :root{
-      --bg:#0b0e14;
-      --panel: rgba(17,21,33,.86);
-      --panel2: rgba(15,19,32,.70);
-      --border:#2a2f3a;
-      --text:#e9e9ee;
-      --muted:#b8c0ff;
-      --accent:#7aa2f7;
-      --good:#9ece6a;
-      --warn:#e0af68;
-      --bad:#f7768e;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --r:16px;
-      --r2:12px;
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0; padding:18px;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background:
-        radial-gradient(1200px 700px at 30% -10%, #1b2755 0%, var(--bg) 60%),
-        radial-gradient(900px 600px at 85% 0%, rgba(122,162,247,.10), rgba(0,0,0,0) 60%);
-      color:var(--text);
-    }
-    .wrap{max-width:1040px; margin:0 auto; display:flex; flex-direction:column; gap:14px;}
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Sentinel Anchor — Crow-Tech Ops Deck</title>
+<meta name="theme-color" content="#02060c"/>
 
-    /* Top */
-    .top{
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(122,162,247,.18), rgba(0,0,0,0));
-      border-radius: var(--r);
-      padding:16px;
-      box-shadow: var(--shadow);
-      display:flex; flex-direction:column; gap:10px;
-    }
-    .topRow{
-      display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-    }
-    h1{margin:0; font-size:1.6rem; letter-spacing:.25px}
-    .sub{margin:0; color:var(--muted); line-height:1.45}
-    .badgeRow{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
-    .badge{
-      border:1px solid var(--border);
-      background: rgba(17,21,33,.70);
-      padding:6px 10px;
-      border-radius:999px;
-      font-size:.85rem;
-      color:var(--accent);
-      display:flex; align-items:center; gap:8px;
-    }
-    .dot{width:9px;height:9px;border-radius:50%; background:var(--good); box-shadow:0 0 12px rgba(158,206,106,.55);}
-    .actions{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-    .btn{
-      border:1px solid var(--border);
-      background: rgba(122,162,247,.16);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      font-weight:800;
-      cursor:pointer;
-    }
-    .btn:active{transform: translateY(1px);}
-    .btn.secondary{background: rgba(15,19,32,.65);}
-    .btn.danger{background: rgba(247,118,142,.14); border-color: rgba(247,118,142,.55);}
+<style>
+  :root{
+    --bg:#02060c;
+    --bg2:#050b12;
+    --panel:#06101c;
+    --panel2:#081526;
+    --ink:#d9fff6;
+    --muted:#8bded0;
+    --line:rgba(0,255,204,.22);
+    --line2:rgba(0,255,204,.12);
+    --glow:rgba(0,255,204,.20);
+    --accent:#00ffcc;
+    --accent2:#56ffe1;
+    --warn:#ffcf5a;
+    --danger:#ff4d7d;
+    --ok:#44ff9a;
+    --shadow: 0 12px 40px rgba(0,0,0,.55);
+    --radius:18px;
+    --radius2:26px;
+  }
 
-    /* Layout */
-    .grid{display:grid; grid-template-columns: 1.08fr .92fr; gap:14px;}
-    @media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 10% -10%, rgba(0,255,204,.10), transparent 55%),
+      radial-gradient(900px 600px at 90% 0%, rgba(86,255,225,.09), transparent 55%),
+      radial-gradient(900px 800px at 50% 110%, rgba(0,140,255,.06), transparent 60%),
+      linear-gradient(180deg, var(--bg), #010308 70%);
+  }
 
-    .card{
-      border:1px solid var(--border);
-      background: var(--panel);
-      border-radius: var(--r);
-      padding:14px;
-      box-shadow: var(--shadow);
-    }
-    .card h2{margin:0; font-size:1.05rem; color:var(--accent); letter-spacing:.2px}
-    .sectionHead{
-      display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-    .pill{
-      font-size:.78rem; padding:4px 10px;
-      border-radius:999px; border:1px solid var(--border);
-      background: rgba(0,0,0,.18);
-      color: var(--muted);
-    }
-    hr.sep{border:0;border-top:1px solid var(--border); margin:14px 0;}
+  /* subtle grid */
+  body:before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(to right, rgba(0,255,204,.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,255,204,.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+    opacity:.25;
+    pointer-events:none;
+    mask-image: radial-gradient(circle at 50% 20%, black 0 55%, transparent 85%);
+  }
 
-    /* Search */
-    .searchBox{
-      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
-      background: var(--panel2);
-      border:1px solid var(--border);
-      padding:10px;
-      border-radius: var(--r2);
-    }
-    input[type="text"], select, textarea{
-      border:1px solid var(--border);
-      background:#0b0f1a;
-      color:var(--text);
-      border-radius: 12px;
-      outline:none;
-      font-size:1rem;
-    }
-    input[type="text"]{
-      flex:1 1 220px;
-      padding:12px;
-    }
-    select{ padding:12px 10px; }
-    .tiny{font-size:.88rem; color:var(--muted); margin:10px 0 0; line-height:1.45}
+  a{color:inherit}
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding: 14px 14px 90px;
+  }
 
-    /* Buttons grid */
-    .btnGrid{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap:10px;
-    }
-    @media (max-width: 560px){ .btnGrid{grid-template-columns: 1fr 1fr;} }
+  /* Top HUD */
+  .hud{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding: 14px 14px;
+    border:1px solid var(--line2);
+    border-radius: var(--radius2);
+    background: linear-gradient(180deg, rgba(6,16,28,.82), rgba(6,16,28,.58));
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 10px;
+    z-index: 10;
+  }
+  .brand{
+    display:flex; align-items:center; gap:12px;
+    min-width: 240px;
+  }
+  .sigil{
+    width:40px;height:40px;border-radius:14px;
+    border:1px solid var(--line);
+    background:
+      radial-gradient(circle at 30% 30%, rgba(0,255,204,.35), transparent 55%),
+      linear-gradient(180deg, rgba(0,255,204,.15), rgba(0,0,0,.05));
+    box-shadow: 0 0 0 2px rgba(0,255,204,.08), 0 0 30px rgba(0,255,204,.10);
+    position:relative;
+  }
+  .sigil:after{
+    content:"";
+    position:absolute; inset:10px;
+    border:1px dashed rgba(0,255,204,.35);
+    border-radius:10px;
+    filter: drop-shadow(0 0 10px rgba(0,255,204,.12));
+  }
+  .brand h1{
+    margin:0;
+    font-size:14px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:var(--accent2);
+  }
+  .brand .sub{
+    font-size:12px;
+    color: rgba(217,255,246,.72);
+    letter-spacing:.06em;
+    margin-top:2px;
+  }
 
-    a.tile{
-      text-decoration:none;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:10px;
-      padding:12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background: var(--panel2);
-      color:var(--text);
-    }
-    a.tile:hover{border-color: rgba(122,162,247,.55);}
-    .tag{font-size:.78rem; color:var(--muted)}
+  .hudRight{
+    display:flex; align-items:center; gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .pill{
+    display:flex; align-items:center; gap:8px;
+    padding:10px 12px;
+    border:1px solid var(--line2);
+    border-radius: 999px;
+    background: rgba(2,6,12,.55);
+    color: rgba(217,255,246,.78);
+    font-size:12px;
+    letter-spacing:.04em;
+  }
+  .dot{width:8px;height:8px;border-radius:50%}
+  .dot.ok{background:var(--ok); box-shadow:0 0 14px rgba(68,255,154,.35)}
+  .dot.warn{background:var(--warn); box-shadow:0 0 14px rgba(255,207,90,.35)}
+  .dot.bad{background:var(--danger); box-shadow:0 0 14px rgba(255,77,125,.35)}
 
-    /* Details (UT) */
-    details.ut{
-      border:1px solid var(--border);
-      border-radius: 14px;
-      background: var(--panel2);
-      padding:10px 12px;
-    }
-    details.ut summary{
-      cursor:pointer;
-      color: var(--accent);
-      font-weight:900;
-      list-style:none;
-      outline:none;
-    }
-    details.ut summary::-webkit-details-marker{display:none;}
-    .utContent{margin-top:10px; color:var(--muted); line-height:1.55}
-    .kbd{
-      border:1px solid var(--border);
-      border-bottom-width:2px;
-      padding:2px 8px;
-      border-radius:8px;
-      background: rgba(0,0,0,.25);
-      color: var(--text);
-      font-weight:800;
-      font-size:.85rem;
-      display:inline-block;
-      margin:0 2px;
-    }
+  .btn{
+    border:1px solid var(--line);
+    background: linear-gradient(180deg, rgba(0,255,204,.12), rgba(0,255,204,.06));
+    color: var(--ink);
+    padding:10px 12px;
+    border-radius: 14px;
+    cursor:pointer;
+    transition:.15s transform, .15s background;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    user-select:none;
+  }
+  .btn:hover{transform: translateY(-1px); background: rgba(0,255,204,.14)}
+  .btn:active{transform: translateY(0px)}
+  .btn.primary{
+    border-color: rgba(0,255,204,.5);
+    background: linear-gradient(180deg, rgba(0,255,204,.22), rgba(0,255,204,.10));
+  }
+  .btn .k{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size:11px;
+    opacity:.7;
+    border:1px solid rgba(0,255,204,.22);
+    padding:2px 6px;
+    border-radius:8px;
+    background: rgba(0,0,0,.25);
+  }
 
-    /* Notes */
-    textarea{
-      width:100%;
-      min-height:220px;
-      resize: vertical;
-      padding:12px;
-      line-height:1.4;
-    }
-    .saveLine{
-      display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;
-      margin-top:10px;
-      color:var(--muted); font-size:.9rem;
-    }
-    .row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
-    .savePill{
-      border:1px solid var(--border);
-      padding:4px 10px;
-      border-radius:999px;
-      background: rgba(0,0,0,.22);
-      color: var(--muted);
-    }
+  /* Layout */
+  .grid{
+    margin-top:14px;
+    display:grid;
+    gap:14px;
+    grid-template-columns: 1.25fr .75fr;
+  }
+  @media (max-width: 980px){
+    .grid{grid-template-columns:1fr}
+    .brand{min-width:auto}
+  }
 
-    /* Editable lists */
-    .list{
-      display:flex; flex-direction:column; gap:8px;
-    }
-    .item{
-      display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap;
-      border:1px solid var(--border);
-      background: var(--panel2);
-      padding:10px 12px;
-      border-radius: 14px;
-    }
-    .itemLeft{display:flex; flex-direction:column; gap:2px; min-width:180px;}
-    .itemTitle{font-weight:900}
-    .itemMeta{color:var(--muted); font-size:.85rem}
-    .itemBtns{display:flex; gap:8px; flex-wrap:wrap}
+  .card{
+    border:1px solid var(--line2);
+    border-radius: var(--radius);
+    background: linear-gradient(180deg, rgba(8,21,38,.72), rgba(6,16,28,.52));
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(7px);
+    overflow:hidden;
+  }
+  .cardHeader{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 14px 10px;
+    border-bottom:1px solid rgba(0,255,204,.10);
+  }
+  .cardHeader h2{
+    margin:0;
+    font-size:12px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color: rgba(217,255,246,.86);
+  }
+  .cardHeader .hint{
+    font-size:12px;
+    color: rgba(217,255,246,.62);
+  }
+  .cardBody{padding:14px}
 
-    /* Modal (Command Palette) */
-    .overlay{
-      position:fixed; inset:0;
-      background: rgba(0,0,0,.62);
-      display:none;
-      align-items:flex-start;
-      justify-content:center;
-      padding:18px;
-      z-index:999;
-    }
-    .modal{
-      width:min(860px, 100%);
-      margin-top:40px;
-      border:1px solid var(--border);
-      border-radius: 18px;
-      background: rgba(17,21,33,.94);
-      box-shadow: 0 20px 60px rgba(0,0,0,.55);
-      overflow:hidden;
-    }
-    .modalTop{
-      padding:12px;
-      border-bottom:1px solid var(--border);
-      display:flex; gap:10px; align-items:center;
-    }
-    .modalTop input{
-      flex:1;
-      padding:12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background:#0b0f1a;
-      color:var(--text);
-      font-size:1rem;
-      outline:none;
-    }
-    .modalBody{
-      max-height: 60vh;
-      overflow:auto;
-      padding:10px;
-    }
-    .cmd{
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      padding:12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background: rgba(15,19,32,.70);
-      margin-bottom:10px;
-      cursor:pointer;
-    }
-    .cmd:hover{border-color: rgba(122,162,247,.55);}
-    .cmdName{font-weight:900}
-    .cmdDesc{color:var(--muted); font-size:.86rem}
-    .cmdRight{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
-    .hint{font-size:.78rem; color:var(--muted)}
-    .footer{
-      color:var(--muted);
-      font-size:.85rem;
-      text-align:center;
-      padding:10px 0 0;
-      opacity:.95;
-    }
+  /* Tiles */
+  .tiles{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:12px;
+  }
+  @media (max-width: 640px){
+    .tiles{grid-template-columns: repeat(2, 1fr)}
+  }
+  .tile{
+    border:1px solid rgba(0,255,204,.18);
+    border-radius: 16px;
+    background: rgba(2,6,12,.35);
+    padding:12px;
+    cursor:pointer;
+    transition:.15s transform, .15s border-color, .15s background;
+    min-height: 78px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    position:relative;
+    overflow:hidden;
+  }
+  .tile:hover{
+    transform: translateY(-2px);
+    border-color: rgba(0,255,204,.40);
+    background: rgba(0,255,204,.06);
+  }
+  .tile .name{
+    font-weight:700;
+    letter-spacing:.08em;
+    font-size:12px;
+  }
+  .tile .desc{
+    font-size:11px;
+    color: rgba(217,255,246,.68);
+    margin-top:6px;
+    line-height:1.25;
+  }
+  .tile:after{
+    content:"";
+    position:absolute;
+    right:-30px; top:-30px;
+    width:90px;height:90px;
+    background: radial-gradient(circle, rgba(0,255,204,.20), transparent 60%);
+    transform: rotate(20deg);
+    pointer-events:none;
+  }
 
-    /* Focus mode */
-    .focus .notFocus{display:none !important;}
-  </style>
+  /* Search */
+  .searchRow{
+    display:flex; gap:10px; align-items:center;
+    flex-wrap:wrap;
+  }
+  .search{
+    flex:1;
+    min-width: 220px;
+    display:flex;
+    border:1px solid rgba(0,255,204,.22);
+    border-radius: 16px;
+    overflow:hidden;
+    background: rgba(0,0,0,.22);
+  }
+  .search input{
+    flex:1;
+    padding:12px 12px;
+    border:none;
+    outline:none;
+    color: var(--ink);
+    background: transparent;
+    font-size:14px;
+  }
+  .search .tag{
+    padding:12px 10px;
+    border-right:1px solid rgba(0,255,204,.12);
+    color: rgba(217,255,246,.65);
+    font-size:12px;
+    letter-spacing:.08em;
+  }
+
+  /* Alerts list */
+  .alerts{
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .alert{
+    border:1px solid rgba(0,255,204,.18);
+    border-radius: 16px;
+    background: rgba(0,0,0,.20);
+    padding:12px;
+  }
+  .alertTop{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  }
+  .alertTitle{
+    font-weight:800;
+    font-size:13px;
+    letter-spacing:.02em;
+    line-height:1.25;
+  }
+  .sev{
+    font-size:11px;
+    padding:4px 8px;
+    border-radius: 999px;
+    border:1px solid rgba(255,255,255,.10);
+    white-space:nowrap;
+  }
+  .sev.minor{color: rgba(217,255,246,.78); border-color: rgba(0,255,204,.18)}
+  .sev.mod{color: var(--warn); border-color: rgba(255,207,90,.35)}
+  .sev.sev{color: var(--danger); border-color: rgba(255,77,125,.35)}
+  .alertMeta{
+    margin-top:6px;
+    color: rgba(217,255,246,.62);
+    font-size:11px;
+    line-height:1.35;
+  }
+  .alertActions{
+    margin-top:10px;
+    display:flex; gap:10px; flex-wrap:wrap;
+  }
+
+  /* Notes */
+  textarea{
+    width:100%;
+    min-height:140px;
+    resize:vertical;
+    border-radius: 16px;
+    border:1px solid rgba(0,255,204,.18);
+    background: rgba(0,0,0,.22);
+    color: var(--ink);
+    padding:12px;
+    outline:none;
+    font-size:13px;
+    line-height:1.45;
+  }
+
+  /* Modal / Command Palette */
+  .modal{
+    position:fixed; inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    background: rgba(0,0,0,.62);
+    padding:18px;
+    z-index: 50;
+  }
+  .modal.show{display:flex}
+  .modalBox{
+    width:min(760px, 100%);
+    border-radius: 22px;
+    border:1px solid rgba(0,255,204,.28);
+    background: linear-gradient(180deg, rgba(6,16,28,.95), rgba(2,6,12,.92));
+    box-shadow: 0 24px 80px rgba(0,0,0,.7);
+    overflow:hidden;
+  }
+  .modalHead{
+    padding:12px 14px;
+    border-bottom:1px solid rgba(0,255,204,.12);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .modalHead .t{
+    font-size:12px; letter-spacing:.22em; text-transform:uppercase;
+    color: rgba(217,255,246,.85);
+  }
+  .modalBody{padding:14px}
+  .cmdInput{
+    width:100%;
+    border-radius:16px;
+    border:1px solid rgba(0,255,204,.22);
+    background: rgba(0,0,0,.26);
+    color: var(--ink);
+    padding:12px;
+    outline:none;
+    font-size:14px;
+  }
+  .cmdList{
+    margin-top:12px;
+    display:flex; flex-direction:column; gap:10px;
+    max-height: 52vh;
+    overflow:auto;
+    padding-right:4px;
+  }
+  .cmdItem{
+    border:1px solid rgba(0,255,204,.14);
+    border-radius: 16px;
+    background: rgba(0,0,0,.18);
+    padding:12px;
+    cursor:pointer;
+    transition:.12s transform, .12s border-color;
+  }
+  .cmdItem:hover{
+    transform: translateY(-1px);
+    border-color: rgba(0,255,204,.35);
+  }
+  .cmdItem .title{font-weight:800; font-size:13px}
+  .cmdItem .small{margin-top:4px; font-size:11px; color: rgba(217,255,246,.62)}
+  .row2{display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+  .smallNote{font-size:11px; color: rgba(217,255,246,.62); line-height:1.3}
+</style>
 </head>
 
 <body>
-  <div class="wrap" id="app">
+<div class="wrap">
 
-    <div class="top">
-      <div class="topRow">
-        <div>
-          <h1>Commander Center</h1>
-          <p class="sub">One console. Fewer decisions. Faster launches.</p>
-        </div>
-
-        <div class="actions">
-          <button class="btn" onclick="openPalette()">⚡ Command</button>
-          <button class="btn secondary" onclick="toggleFocus()">🎯 Focus</button>
-          <button class="btn secondary" onclick="copyPublicURL()">🔗 Copy URL</button>
-        </div>
-      </div>
-
-      <div class="badgeRow">
-        <span class="badge"><span class="dot"></span> Status: Online</span>
-        <span class="badge">Mode: Operator</span>
-        <span class="badge">Node: Sentinel Anchor</span>
-        <span class="badge" id="clockBadge">Time: —</span>
-        <span class="badge" id="saveBadge">Notes: Ready</span>
+  <div class="hud">
+    <div class="brand">
+      <div class="sigil"></div>
+      <div>
+        <h1>SENTINEL ANCHOR</h1>
+        <div class="sub">Crow-Tech Ops Deck • static, fast, ruthless</div>
       </div>
     </div>
 
-    <details class="ut notFocus">
-      <summary>UT Guide — tap to open (built for low-energy days)</summary>
-      <div class="utContent">
-        <p><b>Use pattern:</b> Search → Launch tool → Write note → Done.</p>
-        <p><b>Command palette:</b> hit <span class="kbd">⚡</span> or <span class="kbd">Ctrl</span>+<span class="kbd">K</span> for instant actions.</p>
-        <p><b>Notes:</b> auto-save is local to this device. Use <b>Export</b> to back up.</p>
-        <p><b>Pinned Links:</b> edit on-page. No code required.</p>
-      </div>
-    </details>
-
-    <div class="grid">
-
-      <!-- LEFT -->
-      <div class="card" id="left">
-        <div class="sectionHead">
-          <h2>Search Console</h2>
-          <span class="pill">Enter to search</span>
-        </div>
-
-        <div class="searchBox">
-          <input id="q" type="text" placeholder="Type once. Launch anywhere." autocomplete="off" />
-          <select id="engine" aria-label="Search engine">
-            <option value="google">Google</option>
-            <option value="ddg">DuckDuckGo</option>
-            <option value="brave">Brave Search</option>
-            <option value="reddit">Reddit</option>
-            <option value="youtube">YouTube</option>
-            <option value="github">GitHub</option>
-            <option value="wikipedia">Wikipedia</option>
-          </select>
-          <button class="btn" onclick="doSearch()">Search</button>
-        </div>
-
-        <p class="tiny notFocus">Tip: Use the command palette for “open VirusTotal / HIBP / Shodan” without scrolling.</p>
-
-        <hr class="sep">
-
-        <div class="sectionHead">
-          <h2>Quick Launch</h2>
-          <span class="pill">Trusted tools</span>
-        </div>
-
-        <div class="btnGrid">
-          <a class="tile" href="https://www.virustotal.com/gui/home/upload" target="_blank" rel="noopener">
-            <span>VirusTotal</span><span class="tag">scan file/url</span>
-          </a>
-          <a class="tile" href="https://haveibeenpwned.com/" target="_blank" rel="noopener">
-            <span>HIBP</span><span class="tag">email breach</span>
-          </a>
-          <a class="tile" href="https://urlscan.io/" target="_blank" rel="noopener">
-            <span>urlscan.io</span><span class="tag">url intel</span>
-          </a>
-          <a class="tile" href="https://www.shodan.io/" target="_blank" rel="noopener">
-            <span>Shodan</span><span class="tag">device search</span>
-          </a>
-          <a class="tile" href="https://www.whois.com/whois/" target="_blank" rel="noopener">
-            <span>WHOIS</span><span class="tag">domain info</span>
-          </a>
-          <a class="tile" href="https://www.google.com/advanced_search" target="_blank" rel="noopener">
-            <span>Google Adv.</span><span class="tag">precision</span>
-          </a>
-          <a class="tile" href="https://www.speedtest.net/" target="_blank" rel="noopener">
-            <span>Speedtest</span><span class="tag">network</span>
-          </a>
-          <a class="tile" href="https://www.bleepingcomputer.com/" target="_blank" rel="noopener">
-            <span>Bleeping</span><span class="tag">fix guides</span>
-          </a>
-          <a class="tile" href="https://www.microsoft.com/en-us/windows/security" target="_blank" rel="noopener">
-            <span>Windows Sec</span><span class="tag">official</span>
-          </a>
-        </div>
-
-        <hr class="sep notFocus">
-
-        <div class="sectionHead notFocus">
-          <h2>Mission Slots</h2>
-          <span class="pill">Local list</span>
-        </div>
-
-        <div class="list notFocus" id="missionList"></div>
-
-        <div class="row notFocus" style="margin-top:10px">
-          <button class="btn secondary" onclick="addMission()">➕ Add mission</button>
-          <button class="btn danger" onclick="clearMissions()">Clear missions</button>
-        </div>
-
-        <p class="tiny notFocus">Missions are saved on this device. Keep them short: “Fix X”, “Build Y”, “Call Z”.</p>
-      </div>
-
-      <!-- RIGHT -->
-      <div class="card" id="right">
-        <div class="sectionHead">
-          <h2>Notes / Journal</h2>
-          <span class="savePill" id="saveState">Ready</span>
-        </div>
-
-        <textarea id="notes" placeholder="Drop anything here. Auto-saves on this device."></textarea>
-
-        <div class="saveLine">
-          <div>Last saved: <b id="lastSaved">—</b></div>
-          <div class="row">
-            <button class="btn secondary" onclick="stampLine()">🕒 Stamp</button>
-            <button class="btn secondary" onclick="dailyTemplate()">📅 Daily</button>
-            <button class="btn secondary" onclick="exportNotes()">Export</button>
-            <button class="btn secondary" onclick="importNotes()">Import</button>
-            <button class="btn danger" onclick="clearNotes()">Clear</button>
-          </div>
-        </div>
-
-        <hr class="sep">
-
-        <div class="sectionHead">
-          <h2>Pinned Links</h2>
-          <span class="pill">Editable</span>
-        </div>
-
-        <div class="list" id="pinList"></div>
-
-        <div class="row" style="margin-top:10px">
-          <button class="btn secondary" onclick="addPin()">➕ Add link</button>
-          <button class="btn danger" onclick="clearPins()">Clear links</button>
-        </div>
-
-        <hr class="sep notFocus">
-
-        <div class="sectionHead notFocus">
-          <h2>Core Links</h2>
-          <span class="pill">Always available</span>
-        </div>
-
-        <div class="btnGrid notFocus" style="grid-template-columns: 1fr;">
-          <a class="tile" href="https://github.com/CyberCrow111/sentinel-anchor" target="_blank" rel="noopener">
-            <span>Control Panel</span><span class="tag">repo</span>
-          </a>
-          <a class="tile" href="https://cybercrow111.github.io/sentinel-anchor/" target="_blank" rel="noopener">
-            <span>Public Site</span><span class="tag">live</span>
-          </a>
-        </div>
-
-        <p class="tiny notFocus">Tip: set this page as your browser home/start page later. That’s max leverage.</p>
-      </div>
-
-    </div>
-
-    <div class="footer">
-      Commander Center · Static Forge · Built to survive low-energy days
-    </div>
-
-  </div>
-
-  <!-- Command Palette -->
-  <div class="overlay" id="overlay" onclick="overlayClick(event)">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Command Palette" onclick="event.stopPropagation()">
-      <div class="modalTop">
-        <input id="cmdInput" type="text" placeholder="Type a command: 'virustotal', 'hibp', 'search github', 'focus'..." autocomplete="off" />
-        <button class="btn secondary" onclick="closePalette()">Esc</button>
-      </div>
-      <div class="modalBody" id="cmdList"></div>
-      <div style="padding: 0 12px 12px;">
-        <div class="hint">Shortcuts: <span class="kbd">Ctrl</span>+<span class="kbd">K</span> opens · <span class="kbd">Esc</span> closes · Enter runs first match</div>
-      </div>
+    <div class="hudRight">
+      <div class="pill" id="statusPill"><span class="dot ok" id="statusDot"></span><span id="statusText">SYSTEM NOMINAL</span></div>
+      <div class="pill"><span class="dot ok"></span><span id="clock">--:--</span></div>
+      <button class="btn primary" id="openCmdBtn" title="Command Palette"><span>COMMAND</span><span class="k">Ctrl K</span></button>
+      <button class="btn" id="openEditBtn" title="Edit modules/locations">CONFIG</button>
     </div>
   </div>
 
-  <input type="file" id="importFile" accept=".txt" style="display:none" />
+  <div class="grid">
 
-  <script>
-    // ----------------------------
-    // Config / Keys (local device)
-    // ----------------------------
-    const NOTES_KEY = 'cc_notes_v2';
-    const TIME_KEY  = 'cc_notes_time_v2';
-    const PINS_KEY  = 'cc_pins_v2';
-    const MISS_KEY  = 'cc_missions_v2';
-    const FOCUS_KEY = 'cc_focus_v2';
+    <!-- Left column: Hub -->
+    <div class="card">
+      <div class="cardHeader">
+        <h2>Hub Console</h2>
+        <div class="hint">Search + Modules + Trip Check</div>
+      </div>
 
-    // ----------------------------
-    // Helpers
-    // ----------------------------
-    function nowStamp(){ return new Date().toLocaleString(); }
-    function safeJSONParse(s, fallback){
-      try{ return JSON.parse(s); } catch(e){ return fallback; }
+      <div class="cardBody">
+        <div class="searchRow">
+          <div class="search">
+            <div class="tag">SEARCH</div>
+            <input id="searchInput" autocomplete="off" placeholder="Try: g: flood warning bakersfield  |  ddg: android automation  |  yt: radar explanation  |  w: Bakersfield CA"/>
+          </div>
+          <button class="btn" id="searchBtn">GO</button>
+          <button class="btn" id="weatherBtn">WEATHER</button>
+        </div>
+
+        <div class="smallNote" style="margin-top:10px">
+          Prefixes: <b>g:</b> Google • <b>ddg:</b> DuckDuckGo • <b>yt:</b> YouTube • <b>w:</b> Wikipedia • no prefix = Google.
+        </div>
+
+        <div style="height:14px"></div>
+
+        <div class="tiles" id="tiles"></div>
+
+        <div style="height:14px"></div>
+
+        <div class="card" style="border-radius:18px; border-color: rgba(0,255,204,.14)">
+          <div class="cardHeader" style="border-bottom-color: rgba(0,255,204,.08)">
+            <h2>Trip Check</h2>
+            <div class="hint" id="tripHint">fast “go/no-go” scan</div>
+          </div>
+          <div class="cardBody">
+            <div class="row2">
+              <div class="smallNote">
+                This deck can’t see your street, but it can prevent “light rain” lies by surfacing: <b>active alerts</b> + <b>live radar</b> + <b>road closures</b>.
+              </div>
+              <div style="display:flex; gap:10px; flex-wrap:wrap">
+                <button class="btn" id="openRadarBtn">OPEN RADAR</button>
+                <button class="btn" id="openRoadsBtn">OPEN ROADS</button>
+                <button class="btn primary" id="openAlertsBtn">CHECK ALERTS</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right column: Alerts + Notes -->
+    <div class="card">
+      <div class="cardHeader">
+        <h2>Live Weather Alerts</h2>
+        <div class="hint"><span id="locLabel">Bakersfield (default)</span></div>
+      </div>
+
+      <div class="cardBody">
+        <div class="row2" style="margin-bottom:10px">
+          <div class="smallNote">Source: National Weather Service (NWS). Tap an alert to open details.</div>
+          <button class="btn" id="refreshAlertsBtn">REFRESH</button>
+        </div>
+        <div class="alerts" id="alerts"></div>
+
+        <div style="height:14px"></div>
+
+        <div class="card" style="border-radius:18px; border-color: rgba(0,255,204,.14)">
+          <div class="cardHeader" style="border-bottom-color: rgba(0,255,204,.08)">
+            <h2>Ops Notes</h2>
+            <div class="hint">local save</div>
+          </div>
+          <div class="cardBody">
+            <textarea id="notes" placeholder="Anything you want to remember: routes that flood, intersections to avoid, safe times, scooter rules, etc."></textarea>
+            <div class="row2" style="margin-top:10px">
+              <div class="smallNote">Saved to your device only (local storage).</div>
+              <button class="btn" id="clearNotesBtn">CLEAR</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Command Palette -->
+<div class="modal" id="cmdModal" aria-hidden="true">
+  <div class="modalBox">
+    <div class="modalHead">
+      <div class="t">Command Palette</div>
+      <button class="btn" id="closeCmdBtn">CLOSE</button>
+    </div>
+    <div class="modalBody">
+      <input class="cmdInput" id="cmdInput" placeholder="Type a command… (examples: radar, roads, alerts, weather, quickmap, 511, satellite, flood maps)">
+      <div class="cmdList" id="cmdList"></div>
+      <div class="smallNote" style="margin-top:10px">Tip: Ctrl+K opens this. On mobile, use the COMMAND button.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Config Modal -->
+<div class="modal" id="cfgModal" aria-hidden="true">
+  <div class="modalBox">
+    <div class="modalHead">
+      <div class="t">Config</div>
+      <button class="btn" id="closeCfgBtn">CLOSE</button>
+    </div>
+    <div class="modalBody">
+      <div class="smallNote">
+        Edit modules + locations here. This saves to your device only (local storage). No code edits required after today.
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="card" style="border-radius:18px; border-color: rgba(0,255,204,.14)">
+        <div class="cardHeader" style="border-bottom-color: rgba(0,255,204,.08)">
+          <h2>Modules</h2>
+          <div class="hint">name + url</div>
+        </div>
+        <div class="cardBody">
+          <textarea id="modulesJson" spellcheck="false" style="min-height:190px"
+            placeholder='[{"name":"WEATHER CENTER","desc":"Ops weather console","url":"https://..."}]'></textarea>
+          <div class="row2" style="margin-top:10px">
+            <div class="smallNote">Format is JSON array of objects: name, desc, url.</div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <button class="btn" id="resetModulesBtn">RESET</button>
+              <button class="btn primary" id="saveModulesBtn">SAVE</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="card" style="border-radius:18px; border-color: rgba(0,255,204,.14)">
+        <div class="cardHeader" style="border-bottom-color: rgba(0,255,204,.08)">
+          <h2>Locations</h2>
+          <div class="hint">label + lat + lon</div>
+        </div>
+        <div class="cardBody">
+          <textarea id="locationsJson" spellcheck="false" style="min-height:170px"
+            placeholder='[{"label":"Bakersfield","lat":35.3733,"lon":-119.0187}]'></textarea>
+          <div class="row2" style="margin-top:10px">
+            <div class="smallNote">Used to fetch NWS alerts near that point. You can add/remove locations.</div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap">
+              <button class="btn" id="resetLocationsBtn">RESET</button>
+              <button class="btn primary" id="saveLocationsBtn">SAVE</button>
+            </div>
+          </div>
+          <div style="height:10px"></div>
+          <div class="row2">
+            <button class="btn" id="prevLocBtn">◀ LOCATION</button>
+            <button class="btn" id="nextLocBtn">LOCATION ▶</button>
+            <div class="pill"><span class="dot ok"></span><span id="activeLocPill">Active: Bakersfield</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+      <div class="smallNote">
+        Crow-Tech note: This deck is intentionally “static + sharp.” When we build the dedicated Weather Command Center repo next, we’ll link it as a module here.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---------- Defaults ----------
+  const DEFAULT_MODULES = [
+    {name:"WEATHER CENTER", desc:"Radar + alerts + roads", url:"https://radar.weather.gov/"},
+    {name:"ALERTS MAP", desc:"NWS alerts overview", url:"https://www.weather.gov/alerts"},
+    {name:"SATELLITE", desc:"GOES imagery", url:"https://www.star.nesdis.noaa.gov/GOES/"},
+    {name:"ROADS (QuickMap)", desc:"Caltrans closures + traffic", url:"https://quickmap.dot.ca.gov/"},
+    {name:"511 CALIFORNIA", desc:"Traffic & incidents", url:"https://www.511ca.org/"},
+    {name:"FEMA FLOOD MAPS", desc:"Flood hazard lookup", url:"https://msc.fema.gov/portal/home"},
+    {name:"AI CORE", desc:"ChatGPT", url:"https://chat.openai.com/"},
+    {name:"GITHUB", desc:"Repos + Pages", url:"https://github.com/"}
+  ];
+
+  const DEFAULT_LOCS = [
+    {label:"Bakersfield, CA", lat:35.3733, lon:-119.0187},
+    {label:"Tulare, CA",      lat:36.2077, lon:-119.3473},
+    {label:"Fresno, CA",      lat:36.7378, lon:-119.7871},
+    {label:"Paso Robles, CA", lat:35.6266, lon:-120.6910},
+    {label:"Nipomo, CA",      lat:35.0428, lon:-120.4760}
+  ];
+
+  // ---------- Storage ----------
+  const LS = {
+    modules: "crowtech.modules.v1",
+    locs: "crowtech.locs.v1",
+    locIndex: "crowtech.locIndex.v1",
+    notes: "crowtech.notes.v1"
+  };
+
+  const $ = (id) => document.getElementById(id);
+
+  function safeJSONParse(text, fallback){
+    try { return JSON.parse(text); } catch { return fallback; }
+  }
+
+  function loadModules(){
+    const raw = localStorage.getItem(LS.modules);
+    return raw ? safeJSONParse(raw, DEFAULT_MODULES) : DEFAULT_MODULES;
+  }
+  function saveModules(mods){
+    localStorage.setItem(LS.modules, JSON.stringify(mods));
+  }
+
+  function loadLocs(){
+    const raw = localStorage.getItem(LS.locs);
+    return raw ? safeJSONParse(raw, DEFAULT_LOCS) : DEFAULT_LOCS;
+  }
+  function saveLocs(locs){
+    localStorage.setItem(LS.locs, JSON.stringify(locs));
+  }
+
+  function loadLocIndex(){
+    const raw = localStorage.getItem(LS.locIndex);
+    const n = raw ? parseInt(raw,10) : 0;
+    return Number.isFinite(n) ? Math.max(0,n) : 0;
+  }
+  function saveLocIndex(i){
+    localStorage.setItem(LS.locIndex, String(i));
+  }
+
+  // ---------- Clock ----------
+  function tickClock(){
+    const d = new Date();
+    const hh = String(d.getHours()).padStart(2,'0');
+    const mm = String(d.getMinutes()).padStart(2,'0');
+    $("clock").textContent = `${hh}:${mm}`;
+  }
+  tickClock();
+  setInterval(tickClock, 1000 * 20);
+
+  // ---------- Open links ----------
+  function open(url){
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  // ---------- Search ----------
+  function doSearch(){
+    const input = $("searchInput");
+    const raw = (input.value || "").trim();
+    if(!raw) return;
+
+    const lower = raw.toLowerCase();
+    let q = raw;
+    let url = "";
+
+    const take = (prefix) => raw.slice(prefix.length).trim();
+
+    if(lower.startsWith("g:")) { q = take("g:"); url = "https://www.google.com/search?q=" + encodeURIComponent(q); }
+    else if(lower.startsWith("ddg:")) { q = take("ddg:"); url = "https://duckduckgo.com/?q=" + encodeURIComponent(q); }
+    else if(lower.startsWith("yt:")) { q = take("yt:"); url = "https://www.youtube.com/results?search_query=" + encodeURIComponent(q); }
+    else if(lower.startsWith("w:")) { q = take("w:"); url = "https://en.wikipedia.org/wiki/Special:Search?search=" + encodeURIComponent(q); }
+    else { url = "https://www.google.com/search?q=" + encodeURIComponent(raw); }
+
+    open(url);
+  }
+
+  $("searchBtn").addEventListener("click", doSearch);
+  $("searchInput").addEventListener("keydown", (e) => {
+    if(e.key === "Enter") doSearch();
+  });
+
+  // ---------- Tiles ----------
+  function renderTiles(){
+    const tiles = $("tiles");
+    const mods = loadModules();
+    tiles.innerHTML = "";
+    for(const m of mods){
+      const div = document.createElement("div");
+      div.className = "tile";
+      div.innerHTML = `<div class="name">${escapeHTML(m.name || "MODULE")}</div>
+                       <div class="desc">${escapeHTML(m.desc || "")}</div>`;
+      div.addEventListener("click", () => open(m.url));
+      tiles.appendChild(div);
     }
-    function open(url){ window.open(url, '_blank', 'noopener'); }
+  }
 
-    // ----------------------------
-    // Clock
-    // ----------------------------
-    const clockBadge = document.getElementById('clockBadge');
-    function tickClock(){
-      const d = new Date();
-      clockBadge.textContent = 'Time: ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }
-    setInterval(tickClock, 1000*15);
-    tickClock();
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
 
-    // ----------------------------
-    // Search
-    // ----------------------------
-    function doSearch(){
-      const q = (document.getElementById('q').value || '').trim();
-      if(!q){ document.getElementById('q').focus(); return; }
-      const engine = document.getElementById('engine').value;
-      const encoded = encodeURIComponent(q);
+  // ---------- Notes ----------
+  $("notes").value = localStorage.getItem(LS.notes) || "";
+  $("notes").addEventListener("input", () => localStorage.setItem(LS.notes, $("notes").value));
+  $("clearNotesBtn").addEventListener("click", () => {
+    localStorage.removeItem(LS.notes);
+    $("notes").value = "";
+  });
 
-      const urls = {
-        google:   `https://www.google.com/search?q=${encoded}`,
-        ddg:      `https://duckduckgo.com/?q=${encoded}`,
-        brave:    `https://search.brave.com/search?q=${encoded}`,
-        reddit:   `https://www.reddit.com/search/?q=${encoded}`,
-        youtube:  `https://www.youtube.com/results?search_query=${encoded}`,
-        github:   `https://github.com/search?q=${encoded}`,
-        wikipedia:`https://en.wikipedia.org/wiki/Special:Search?search=${encoded}`
-      };
-      open(urls[engine] || urls.google);
-    }
-    document.addEventListener('keydown', (e)=>{
-      const active = document.activeElement;
-      if(e.key === 'Enter' && active && active.id === 'q'){ doSearch(); }
-      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k'){
-        e.preventDefault(); openPalette();
+  // ---------- Trip buttons ----------
+  $("openRadarBtn").addEventListener("click", () => open("https://radar.weather.gov/"));
+  $("openRoadsBtn").addEventListener("click", () => open("https://quickmap.dot.ca.gov/"));
+  $("openAlertsBtn").addEventListener("click", () => { refreshAlerts(true); });
+
+  $("weatherBtn").addEventListener("click", () => open("https://radar.weather.gov/"));
+
+  // ---------- Alerts (NWS API) ----------
+  function sevClass(eventName){
+    const s = (eventName || "").toLowerCase();
+    if(s.includes("warning")) return "sev";
+    if(s.includes("watch") || s.includes("advisory")) return "mod";
+    return "minor";
+  }
+
+  function setStatus(level, text){
+    const dot = $("statusDot");
+    const label = $("statusText");
+    label.textContent = text;
+
+    dot.classList.remove("ok","warn","bad");
+    if(level === "ok") dot.classList.add("ok");
+    else if(level === "warn") dot.classList.add("warn");
+    else dot.classList.add("bad");
+  }
+
+  function activeLocation(){
+    const locs = loadLocs();
+    let i = loadLocIndex();
+    if(i >= locs.length) i = 0;
+    saveLocIndex(i);
+    const loc = locs[i] || DEFAULT_LOCS[0];
+    $("locLabel").textContent = loc.label || "Location";
+    $("activeLocPill").textContent = "Active: " + (loc.label || "Location");
+    return loc;
+  }
+
+  async function fetchAlertsFor(lat, lon){
+    // NWS endpoint supports point-based alerts
+    const url = `https://api.weather.gov/alerts/active?point=${encodeURIComponent(lat + "," + lon)}`;
+    const res = await fetch(url, {
+      headers: {
+        "Accept": "application/geo+json",
+        // NWS asks for a User-Agent; not strictly required, but good practice:
+        "User-Agent": "CrowTech-SentinelAnchor (github pages)"
       }
-      if(e.key === 'Escape'){ closePalette(); }
     });
+    if(!res.ok) throw new Error("NWS fetch failed: " + res.status);
+    return await res.json();
+  }
 
-    // ----------------------------
-    // Copy URL
-    // ----------------------------
-    function copyPublicURL(){
-      const url = window.location.href;
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(url).then(()=>toast('Copied URL'))
-          .catch(()=>fallbackCopy(url));
-      } else fallbackCopy(url);
-    }
-    function fallbackCopy(text){
-      const ta = document.createElement('textarea');
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      try{ document.execCommand('copy'); toast('Copied URL'); }
-      catch(e){ alert('Copy failed: ' + text); }
-      document.body.removeChild(ta);
-    }
+  function renderAlerts(items){
+    const box = $("alerts");
+    box.innerHTML = "";
 
-    // ----------------------------
-    // Notes
-    // ----------------------------
-    const notesEl = document.getElementById('notes');
-    const lastSavedEl = document.getElementById('lastSaved');
-    const saveStateEl = document.getElementById('saveState');
-    const saveBadge = document.getElementById('saveBadge');
-    let saveTimer = null;
-
-    function setSaveUI(state, stamp){
-      saveStateEl.textContent = state;
-      saveBadge.textContent = 'Notes: ' + state;
-      if(stamp) lastSavedEl.textContent = stamp;
+    if(!items || items.length === 0){
+      box.innerHTML = `<div class="alert">
+        <div class="alertTop">
+          <div class="alertTitle">No active alerts for this location.</div>
+          <div class="sev minor">CLEAR</div>
+        </div>
+        <div class="alertMeta">Still check radar if skies look weird. “Clear” doesn’t mean “dry streets.”</div>
+        <div class="alertActions">
+          <button class="btn" onclick="window.open('https://radar.weather.gov/','_blank')">OPEN RADAR</button>
+          <button class="btn" onclick="window.open('https://www.weather.gov/alerts','_blank')">ALERTS MAP</button>
+        </div>
+      </div>`;
+      setStatus("ok","SYSTEM NOMINAL");
+      return;
     }
 
-    function loadNotes(){
-      try{
-        const txt = localStorage.getItem(NOTES_KEY) || '';
-        const t = localStorage.getItem(TIME_KEY) || '';
-        notesEl.value = txt;
-        setSaveUI('Ready', t || '—');
-        if(t) lastSavedEl.textContent = t;
-        else if(txt) lastSavedEl.textContent = 'Loaded';
-      } catch(e){
-        setSaveUI('Storage blocked', '—');
-      }
+    // status color based on most severe
+    let worst = "ok";
+    for(const a of items){
+      const ev = (a?.properties?.event || "").toLowerCase();
+      if(ev.includes("warning")) { worst = "bad"; break; }
+      if(ev.includes("watch") || ev.includes("advisory")) worst = (worst === "ok" ? "warn" : worst);
     }
-    function scheduleSave(){
-      setSaveUI('Saving…');
-      clearTimeout(saveTimer);
-      saveTimer = setTimeout(saveNotes, 450);
-    }
-    function saveNotes(){
-      const stamp = nowStamp();
-      try{
-        localStorage.setItem(NOTES_KEY, notesEl.value);
-        localStorage.setItem(TIME_KEY, stamp);
-        setSaveUI('Saved', stamp);
-      } catch(e){
-        setSaveUI('Save failed', lastSavedEl.textContent || '—');
-      }
-    }
-    notesEl.addEventListener('input', scheduleSave);
+    setStatus(worst, worst === "bad" ? "ACTIVE WARNING" : worst === "warn" ? "ACTIVE ADVISORY" : "SYSTEM NOMINAL");
 
-    function stampLine(){
-      const stamp = '\n[' + nowStamp() + '] ';
-      insertAtCursor(notesEl, stamp);
-      scheduleSave();
-    }
-    function dailyTemplate(){
-      const d = new Date();
-      const date = d.toLocaleDateString();
-      const template =
-`[Daily Log — ${date}]
-Mission: 
-Wins:
-Needs:
-Notes:
-Next:
----\n`;
-      insertAtCursor(notesEl, '\n' + template);
-      scheduleSave();
-    }
+    for(const f of items){
+      const p = f.properties || {};
+      const title = p.event || "Alert";
+      const headline = p.headline || "";
+      const area = p.areaDesc || "";
+      const ends = p.ends || p.expires || "";
+      const link = p.uri || (p.id || "");
+      const sev = sevClass(title);
 
-    function exportNotes(){
-      const content = notesEl.value || '';
-      const stamp = new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-      const filename = `commander-notes-${stamp}.txt`;
-      const blob = new Blob([content], {type:'text/plain'});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = filename;
-      document.body.appendChild(a); a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      toast('Exported');
-    }
-
-    function importNotes(){
-      document.getElementById('importFile').click();
-    }
-    document.getElementById('importFile').addEventListener('change', async (e)=>{
-      const file = e.target.files && e.target.files[0];
-      if(!file) return;
-      const text = await file.text();
-      notesEl.value = text;
-      saveNotes();
-      toast('Imported');
-      e.target.value = '';
-    });
-
-    function clearNotes(){
-      const ok = confirm('Clear notes on this device? (Export first if needed.)');
-      if(!ok) return;
-      notesEl.value = '';
-      try{
-        localStorage.removeItem(NOTES_KEY);
-        localStorage.removeItem(TIME_KEY);
-      } catch(e){}
-      setSaveUI('Ready', '—');
-      toast('Cleared');
-    }
-
-    function insertAtCursor(el, text) {
-      const start = el.selectionStart || 0;
-      const end = el.selectionEnd || 0;
-      const before = el.value.substring(0, start);
-      const after  = el.value.substring(end);
-      el.value = before + text + after;
-      const pos = start + text.length;
-      el.setSelectionRange(pos, pos);
-      el.focus();
-    }
-
-    // ----------------------------
-    // Pinned Links (editable on-page)
-    // ----------------------------
-    const pinList = document.getElementById('pinList');
-
-    function defaultPins(){
-      return [
-        {name:'Victoria ❤️', url:'', note:'tap to set'},
-        {name:'Crow-Tech Hub', url:'', note:'tap to set'},
-      ];
-    }
-
-    function loadPins(){
-      const raw = localStorage.getItem(PINS_KEY);
-      const pins = raw ? safeJSONParse(raw, defaultPins()) : defaultPins();
-      renderPins(pins);
-    }
-    function savePins(pins){
-      localStorage.setItem(PINS_KEY, JSON.stringify(pins));
-    }
-    function renderPins(pins){
-      pinList.innerHTML = '';
-      pins.forEach((p, idx)=>{
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `
-          <div class="itemLeft">
-            <div class="itemTitle">${escapeHTML(p.name || 'Untitled')}</div>
-            <div class="itemMeta">${escapeHTML(p.url ? p.url : (p.note || 'No URL set'))}</div>
-          </div>
-          <div class="itemBtns">
-            <button class="btn secondary" onclick="openPin(${idx})">Open</button>
-            <button class="btn secondary" onclick="editPin(${idx})">Edit</button>
-            <button class="btn danger" onclick="deletePin(${idx})">Del</button>
-          </div>
-        `;
-        pinList.appendChild(div);
+      const div = document.createElement("div");
+      div.className = "alert";
+      div.innerHTML = `
+        <div class="alertTop">
+          <div class="alertTitle">${escapeHTML(title)}</div>
+          <div class="sev ${sev}">${sev === "sev" ? "WARNING" : sev === "mod" ? "ADVISORY" : "ALERT"}</div>
+        </div>
+        <div class="alertMeta">
+          <div><b>Area:</b> ${escapeHTML(area)}</div>
+          ${headline ? `<div><b>Headline:</b> ${escapeHTML(headline)}</div>` : ``}
+          ${ends ? `<div><b>Ends:</b> ${escapeHTML(String(ends))}</div>` : ``}
+        </div>
+        <div class="alertActions">
+          <button class="btn primary" data-open="${escapeHTML(link)}">OPEN DETAILS</button>
+          <button class="btn" data-open="https://radar.weather.gov/">RADAR</button>
+          <button class="btn" data-open="https://quickmap.dot.ca.gov/">ROADS</button>
+        </div>
+      `;
+      div.querySelectorAll("button[data-open]").forEach(btn => {
+        btn.addEventListener("click", () => open(btn.getAttribute("data-open")));
       });
-      savePins(pins);
+      box.appendChild(div);
     }
-    function getPins(){
-      const raw = localStorage.getItem(PINS_KEY);
-      return raw ? safeJSONParse(raw, defaultPins()) : defaultPins();
-    }
-    function openPin(i){
-      const pins = getPins();
-      const p = pins[i];
-      if(!p || !p.url){ toast('No URL set'); return; }
-      open(p.url);
-    }
-    function editPin(i){
-      const pins = getPins();
-      const p = pins[i] || {name:'', url:'', note:''};
-      const name = prompt('Link name:', p.name || '');
-      if(name === null) return;
-      const url = prompt('URL (include https://):', p.url || '');
-      if(url === null) return;
-      const note = prompt('Short note (optional):', p.note || '');
-      pins[i] = {name: name.trim(), url: url.trim(), note: (note||'').trim()};
-      renderPins(pins);
-      toast('Saved link');
-    }
-    function addPin(){
-      const pins = getPins();
-      pins.push({name:'New Link', url:'', note:'tap Edit'});
-      renderPins(pins);
-      toast('Added');
-    }
-    function deletePin(i){
-      const ok = confirm('Delete this pinned link?');
-      if(!ok) return;
-      const pins = getPins();
-      pins.splice(i,1);
-      renderPins(pins);
-      toast('Deleted');
-    }
-    function clearPins(){
-      const ok = confirm('Clear all pinned links on this device?');
-      if(!ok) return;
-      localStorage.removeItem(PINS_KEY);
-      loadPins();
-      toast('Cleared');
-    }
+  }
 
-    // ----------------------------
-    // Missions (editable list)
-    // ----------------------------
-    const missionList = document.getElementById('missionList');
+  async function refreshAlerts(openAfter){
+    const loc = activeLocation();
+    $("alerts").innerHTML = `<div class="alert"><div class="alertTitle">Fetching alerts…</div><div class="alertMeta">Contacting NWS systems.</div></div>`;
+    try{
+      const data = await fetchAlertsFor(loc.lat, loc.lon);
+      const feats = data.features || [];
+      renderAlerts(feats);
 
-    function defaultMissions(){
-      return [
-        {t:'Add one link', d:'Pinned Links → Edit'},
-        {t:'Write a daily log', d:'Notes → Daily'},
-        {t:'Run a safety check', d:'VirusTotal / HIBP'}
-      ];
-    }
-    function getMissions(){
-      const raw = localStorage.getItem(MISS_KEY);
-      return raw ? safeJSONParse(raw, defaultMissions()) : defaultMissions();
-    }
-    function saveMissions(m){
-      localStorage.setItem(MISS_KEY, JSON.stringify(m));
-    }
-    function renderMissions(m){
-      missionList.innerHTML = '';
-      m.forEach((x, idx)=>{
-        const div = document.createElement('div');
-        div.className = 'item';
-        div.innerHTML = `
-          <div class="itemLeft">
-            <div class="itemTitle">${escapeHTML(x.t || 'Untitled')}</div>
-            <div class="itemMeta">${escapeHTML(x.d || '')}</div>
-          </div>
-          <div class="itemBtns">
-            <button class="btn secondary" onclick="editMission(${idx})">Edit</button>
-            <button class="btn danger" onclick="deleteMission(${idx})">Del</button>
-          </div>
-        `;
-        missionList.appendChild(div);
-      });
-      saveMissions(m);
-    }
-    function addMission(){
-      const m = getMissions();
-      const t = prompt('Mission title (short):', 'New mission');
-      if(t === null) return;
-      const d = prompt('Details (optional):', '');
-      if(d === null) return;
-      m.push({t: t.trim(), d: d.trim()});
-      renderMissions(m);
-      toast('Mission added');
-    }
-    function editMission(i){
-      const m = getMissions();
-      const x = m[i];
-      const t = prompt('Mission title:', x.t || '');
-      if(t === null) return;
-      const d = prompt('Details:', x.d || '');
-      if(d === null) return;
-      m[i] = {t: t.trim(), d: d.trim()};
-      renderMissions(m);
-      toast('Saved');
-    }
-    function deleteMission(i){
-      const ok = confirm('Delete mission?');
-      if(!ok) return;
-      const m = getMissions();
-      m.splice(i,1);
-      renderMissions(m);
-      toast('Deleted');
-    }
-    function clearMissions(){
-      const ok = confirm('Clear missions on this device?');
-      if(!ok) return;
-      localStorage.removeItem(MISS_KEY);
-      renderMissions(defaultMissions());
-      toast('Cleared');
-    }
-
-    // ----------------------------
-    // Focus Mode
-    // ----------------------------
-    function toggleFocus(){
-      const app = document.getElementById('app');
-      const on = !app.classList.contains('focus');
-      if(on) app.classList.add('focus'); else app.classList.remove('focus');
-      localStorage.setItem(FOCUS_KEY, on ? '1' : '0');
-      toast(on ? 'Focus ON' : 'Focus OFF');
-    }
-    (function loadFocus(){
-      const on = localStorage.getItem(FOCUS_KEY) === '1';
-      if(on) document.getElementById('app').classList.add('focus');
-    })();
-
-    // ----------------------------
-    // Command Palette
-    // ----------------------------
-    const overlay = document.getElementById('overlay');
-    const cmdInput = document.getElementById('cmdInput');
-    const cmdList = document.getElementById('cmdList');
-
-    const COMMANDS = [
-      {name:'Search (use typed query)', desc:'Runs search using the selected engine', run:()=>doSearch()},
-      {name:'Focus mode', desc:'Toggle Focus mode', run:()=>toggleFocus()},
-      {name:'Stamp in notes', desc:'Insert timestamp line', run:()=>stampLine()},
-      {name:'Daily template', desc:'Insert daily log template', run:()=>dailyTemplate()},
-      {name:'Export notes', desc:'Download notes as .txt', run:()=>exportNotes()},
-      {name:'Import notes', desc:'Load notes from .txt', run:()=>importNotes()},
-      {name:'VirusTotal', desc:'Scan suspicious files/links', run:()=>open('https://www.virustotal.com/gui/home/upload')},
-      {name:'Have I Been Pwned', desc:'Check email breaches', run:()=>open('https://haveibeenpwned.com/')},
-      {name:'urlscan.io', desc:'URL analysis', run:()=>open('https://urlscan.io/')},
-      {name:'Shodan', desc:'Internet-exposed devices', run:()=>open('https://www.shodan.io/')},
-      {name:'WHOIS', desc:'Domain lookup', run:()=>open('https://www.whois.com/whois/')},
-      {name:'Google Advanced Search', desc:'Precision search', run:()=>open('https://www.google.com/advanced_search')},
-      {name:'Speedtest', desc:'Network test', run:()=>open('https://www.speedtest.net/')},
-      {name:'BleepingComputer', desc:'Fix guides', run:()=>open('https://www.bleepingcomputer.com/')},
-      {name:'Control Panel', desc:'Open GitHub repo', run:()=>open('https://github.com/CyberCrow111/sentinel-anchor')},
-      {name:'Public Site', desc:'Open public site', run:()=>open('https://cybercrow111.github.io/sentinel-anchor/')},
-      {name:'Add mission', desc:'Create a mission item', run:()=>addMission()},
-      {name:'Add pinned link', desc:'Create a pinned link', run:()=>addPin()},
-    ];
-
-    function openPalette(){
-      overlay.style.display = 'flex';
-      renderCommands('');
-      setTimeout(()=>{ cmdInput.value=''; cmdInput.focus(); }, 20);
-    }
-    function closePalette(){
-      overlay.style.display = 'none';
-    }
-    function overlayClick(e){
-      if(e.target === overlay) closePalette();
-    }
-
-    function renderCommands(filter){
-      const f = (filter || '').toLowerCase().trim();
-      const q = (document.getElementById('q').value || '').trim();
-      let list = COMMANDS.slice();
-
-      // Smart extra commands based on search box text
-      if(q){
-        list.unshift(
-          {name:`Search Google: ${q}`, desc:'Open Google search for current query', run:()=>open('https://www.google.com/search?q='+encodeURIComponent(q))},
-          {name:`Search GitHub: ${q}`, desc:'Open GitHub search for current query', run:()=>open('https://github.com/search?q='+encodeURIComponent(q))},
-          {name:`Search Reddit: ${q}`, desc:'Open Reddit search for current query', run:()=>open('https://www.reddit.com/search/?q='+encodeURIComponent(q))}
-        );
+      if(openAfter){
+        // if there’s an alert, open NWS alerts map as a quick visual
+        if(feats.length > 0) open("https://www.weather.gov/alerts");
       }
+    }catch(err){
+      setStatus("warn","DATA DEGRADED");
+      $("alerts").innerHTML = `<div class="alert">
+        <div class="alertTop">
+          <div class="alertTitle">Alert feed failed</div>
+          <div class="sev mod">DEGRADED</div>
+        </div>
+        <div class="alertMeta">${escapeHTML(err.message || String(err))}</div>
+        <div class="alertActions">
+          <button class="btn primary" onclick="window.location.reload()">RELOAD</button>
+          <button class="btn" onclick="window.open('https://www.weather.gov/alerts','_blank')">OPEN ALERTS MAP</button>
+        </div>
+      </div>`;
+    }
+  }
 
-      const filtered = !f ? list : list.filter(c =>
-        c.name.toLowerCase().includes(f) || (c.desc||'').toLowerCase().includes(f)
-      );
+  $("refreshAlertsBtn").addEventListener("click", () => refreshAlerts(false));
 
-      cmdList.innerHTML = '';
-      filtered.slice(0, 24).forEach((c, idx)=>{
-        const div = document.createElement('div');
-        div.className = 'cmd';
-        div.tabIndex = 0;
-        div.innerHTML = `
-          <div>
-            <div class="cmdName">${escapeHTML(c.name)}</div>
-            <div class="cmdDesc">${escapeHTML(c.desc || '')}</div>
-          </div>
-          <div class="cmdRight">
-            <span class="pill">Run</span>
-          </div>
-        `;
-        div.onclick = ()=>{ c.run(); closePalette(); };
-        cmdList.appendChild(div);
-      });
+  // ---------- Command palette ----------
+  const cmdModal = $("cmdModal");
+  const cfgModal = $("cfgModal");
 
-      // Enter runs first match
-      cmdInput.onkeydown = (e)=>{
-        if(e.key === 'Enter'){
-          const first = filtered[0];
-          if(first){ first.run(); closePalette(); }
-        }
-      };
+  const COMMANDS = [
+    {title:"Open Radar", small:"NWS radar viewer", run: () => open("https://radar.weather.gov/")},
+    {title:"Open Alerts Map", small:"NWS alerts overview", run: () => open("https://www.weather.gov/alerts")},
+    {title:"Open Roads (QuickMap)", small:"Caltrans closures + traffic", run: () => open("https://quickmap.dot.ca.gov/")},
+    {title:"Open 511 California", small:"traffic & incidents", run: () => open("https://www.511ca.org/")},
+    {title:"Open Satellite", small:"GOES imagery", run: () => open("https://www.star.nesdis.noaa.gov/GOES/")},
+    {title:"Open FEMA Flood Maps", small:"flood hazard lookup", run: () => open("https://msc.fema.gov/portal/home")},
+    {title:"Refresh Alerts", small:"Fetch live NWS alerts for active location", run: () => refreshAlerts(false)},
+    {title:"Next Location", small:"Cycle alert location forward", run: () => cycleLoc(+1)},
+    {title:"Previous Location", small:"Cycle alert location backward", run: () => cycleLoc(-1)},
+    {title:"Open Config", small:"Edit modules + locations", run: () => showCfg(true)}
+  ];
+
+  function showCmd(show){
+    cmdModal.classList.toggle("show", !!show);
+    cmdModal.setAttribute("aria-hidden", show ? "false" : "true");
+    if(show){
+      $("cmdInput").value = "";
+      renderCmdList("");
+      setTimeout(() => $("cmdInput").focus(), 50);
+    }
+  }
+  function showCfg(show){
+    cfgModal.classList.toggle("show", !!show);
+    cfgModal.setAttribute("aria-hidden", show ? "false" : "true");
+    if(show){
+      $("modulesJson").value = JSON.stringify(loadModules(), null, 2);
+      $("locationsJson").value = JSON.stringify(loadLocs(), null, 2);
+    }
+  }
+
+  function renderCmdList(filter){
+    const list = $("cmdList");
+    list.innerHTML = "";
+    const f = (filter || "").trim().toLowerCase();
+    const items = COMMANDS.filter(c => !f || c.title.toLowerCase().includes(f) || c.small.toLowerCase().includes(f));
+
+    for(const c of items){
+      const div = document.createElement("div");
+      div.className = "cmdItem";
+      div.innerHTML = `<div class="title">${escapeHTML(c.title)}</div><div class="small">${escapeHTML(c.small)}</div>`;
+      div.addEventListener("click", () => { showCmd(false); c.run(); });
+      list.appendChild(div);
     }
 
-    cmdInput.addEventListener('input', (e)=>renderCommands(e.target.value));
-
-    // ----------------------------
-    // Toast (tiny feedback)
-    // ----------------------------
-    let toastTimer = null;
-    function toast(msg){
-      clearTimeout(toastTimer);
-      const b = document.getElementById('saveBadge');
-      const old = b.textContent;
-      b.textContent = msg;
-      toastTimer = setTimeout(()=>{ b.textContent = old; }, 1500);
+    if(items.length === 0){
+      list.innerHTML = `<div class="cmdItem"><div class="title">No matches</div><div class="small">Try “radar”, “roads”, “alerts”, “satellite”, “flood”.</div></div>`;
     }
+  }
 
-    // ----------------------------
-    // Escape HTML
-    // ----------------------------
-    function escapeHTML(s){
-      return String(s).replace(/[&<>"']/g, (c)=>({
-        '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'
-      }[c]));
+  $("openCmdBtn").addEventListener("click", () => showCmd(true));
+  $("closeCmdBtn").addEventListener("click", () => showCmd(false));
+  $("cmdModal").addEventListener("click", (e) => { if(e.target === cmdModal) showCmd(false); });
+  $("cmdInput").addEventListener("input", (e) => renderCmdList(e.target.value));
+
+  // Ctrl+K
+  window.addEventListener("keydown", (e) => {
+    const isK = (e.key || "").toLowerCase() === "k";
+    if((e.ctrlKey || e.metaKey) && isK){
+      e.preventDefault();
+      showCmd(true);
     }
+    if(e.key === "Escape"){
+      showCmd(false);
+      showCfg(false);
+    }
+  });
 
-    // ----------------------------
-    // Boot
-    // ----------------------------
-    loadNotes();
-    loadPins();
-    renderMissions(getMissions());
+  // ---------- Config ----------
+  $("openEditBtn").addEventListener("click", () => showCfg(true));
+  $("closeCfgBtn").addEventListener("click", () => showCfg(false));
+  $("cfgModal").addEventListener("click", (e) => { if(e.target === cfgModal) showCfg(false); });
 
-    // If user types, keep save state accurate
-    // (initial state already set by loadNotes)
-  </script>
+  $("resetModulesBtn").addEventListener("click", () => { $("modulesJson").value = JSON.stringify(DEFAULT_MODULES, null, 2); });
+  $("saveModulesBtn").addEventListener("click", () => {
+    const mods = safeJSONParse($("modulesJson").value, null);
+    if(!Array.isArray(mods)) return alert("Modules JSON must be an array.");
+    saveModules(mods);
+    renderTiles();
+    alert("Modules saved.");
+  });
+
+  $("resetLocationsBtn").addEventListener("click", () => { $("locationsJson").value = JSON.stringify(DEFAULT_LOCS, null, 2); });
+  $("saveLocationsBtn").addEventListener("click", () => {
+    const locs = safeJSONParse($("locationsJson").value, null);
+    if(!Array.isArray(locs)) return alert("Locations JSON must be an array.");
+    saveLocs(locs);
+    // clamp index
+    let i = loadLocIndex();
+    if(i >= locs.length) i = 0;
+    saveLocIndex(i);
+    activeLocation();
+    refreshAlerts(false);
+    alert("Locations saved.");
+  });
+
+  function cycleLoc(dir){
+    const locs = loadLocs();
+    let i = loadLocIndex();
+    i = (i + dir + locs.length) % locs.length;
+    saveLocIndex(i);
+    activeLocation();
+    refreshAlerts(false);
+  }
+
+  $("prevLocBtn").addEventListener("click", () => cycleLoc(-1));
+  $("nextLocBtn").addEventListener("click", () => cycleLoc(+1));
+
+  // ---------- Init ----------
+  renderTiles();
+  activeLocation();
+  refreshAlerts(false);
+  renderCmdList("");
+
+})();
+</script>
 </body>
 </html>
