@@ -1,13 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Commander Center — Crow-Tech</title>
-  <meta name="description" content="Crow-Tech Commander Center: command palette, search, launchpad, notes, missions." />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>Sentinel Anchor — Crow-Tech Ops Hub</title>
+  <meta name="description" content="Crow-Tech Sentinel Anchor: command palette, multi-engine search, launchpad, pins, missions, notes. Built for low energy, high leverage." />
+  <meta name="theme-color" content="#060812"/>
+
   <style>
     :root{
-      --bg:#070A12;
+      --bg:#060812;
       --panel:rgba(10,14,26,.82);
       --panel2:rgba(8,11,22,.68);
       --stroke:rgba(160,190,255,.14);
@@ -40,7 +42,7 @@
       overflow-x:hidden;
     }
 
-    /* Subtle Crow-Tech scanlines */
+    /* Subtle scanlines */
     body:before{
       content:"";
       position:fixed; inset:0;
@@ -57,7 +59,7 @@
       mix-blend-mode:overlay;
     }
 
-    .wrap{max-width:1120px; margin:0 auto; display:flex; flex-direction:column; gap:14px;}
+    .wrap{max-width:1160px; margin:0 auto; display:flex; flex-direction:column; gap:14px;}
 
     .card{
       border:1px solid var(--stroke);
@@ -254,7 +256,6 @@
     /* Focus Mode */
     .focus .notFocus{display:none !important;}
 
-    /* Diagnostics */
     .diag{
       border:1px dashed rgba(124,255,221,.35);
       background: rgba(0,0,0,.16);
@@ -273,8 +274,8 @@
     <div class="card top">
       <div class="topRow">
         <div>
-          <h1>Commander Center</h1>
-          <p class="sub">Crow-Tech launchpad + command palette + notes + missions. Built for power use on low energy.</p>
+          <h1>Sentinel Anchor</h1>
+          <p class="sub">Crow-Tech Ops Hub: command palette + multi-engine search + launchpad + pins + missions + notes. Static + strong.</p>
         </div>
 
         <div class="actions">
@@ -303,7 +304,7 @@
         </div>
 
         <div class="searchBox">
-          <input id="q" type="text" placeholder="Examples:  'how to harden android'  |  '!gh sentinel anchor'  |  '!r best android automation'" autocomplete="off" />
+          <input id="q" type="text" placeholder="Examples: 'android automation' | '!gh sentinel-anchor' | '!r best weather radar app'" autocomplete="off" />
           <select id="engine" aria-label="Search engine">
             <option value="google">Google</option>
             <option value="ddg">DuckDuckGo</option>
@@ -317,21 +318,20 @@
         </div>
 
         <p class="tiny notFocus">
-          <b>Bangs:</b> <span class="miniPill">!g</span> <span class="miniPill">!ddg</span> <span class="miniPill">!br</span>
+          <b>Bangs:</b>
+          <span class="miniPill">!g</span> <span class="miniPill">!ddg</span> <span class="miniPill">!br</span>
           <span class="miniPill">!r</span> <span class="miniPill">!yt</span> <span class="miniPill">!gh</span> <span class="miniPill">!w</span>
-          (Example: <b>!gh shodan dorking</b>)
+          (Example: <b>!gh weather command center</b>)
         </p>
 
         <hr>
 
         <div class="head">
           <h2>Quick Launch</h2>
-          <span class="pill">Trusted tools</span>
+          <span class="pill">editable tiles</span>
         </div>
 
-        <div class="tiles" id="quickTiles">
-          <!-- default tiles injected by JS -->
-        </div>
+        <div class="tiles" id="quickTiles"></div>
 
         <div class="actions notFocus" style="margin-top:10px">
           <button class="btn secondary" id="btnEditTiles" type="button">🧩 Edit Launch Tiles</button>
@@ -368,7 +368,7 @@
           <span class="miniPill" id="noteState">Ready</span>
         </div>
 
-        <textarea id="notes" placeholder="Drop anything here. Auto-saves on this device. Use 'Daily' when brain is tired."></textarea>
+        <textarea id="notes" placeholder="Drop anything here. Auto-saves on this device. Use Daily when the brain is tired."></textarea>
 
         <div class="saveLine">
           <div>Last saved: <b id="lastSaved">—</b></div>
@@ -423,20 +423,20 @@
         <hr class="notFocus">
 
         <div class="diag notFocus" id="diagBox">
-          <b>Diagnostics:</b> If Command/Search ever stop working, it usually means a JS error or cached old page.
-          This build shows JS status up top as <b>JS: OK</b> when it’s healthy.
+          <b>Diagnostics:</b> If Command/Search stop working, it’s usually a JS error or cached old page.
+          This build shows JS status up top as <b>JS: OK</b> when healthy. If it’s stuck, hard refresh or open in a private tab.
         </div>
       </div>
     </div>
 
-    <div class="footer">Crow-Tech Commander Center · Static + strong · built for power users</div>
+    <div class="footer">Crow-Tech Sentinel Anchor · Static + strong · built for power users</div>
   </div>
 
   <!-- Command Palette -->
   <div class="overlay" id="overlay" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-label="Command Palette">
       <div class="modalTop">
-        <input id="cmdInput" type="text" placeholder="Commands: search · tiles · notes · missions · virustotal · hibp · shodan…" autocomplete="off" />
+        <input id="cmdInput" type="text" placeholder="Commands: search · focus · tiles · pins · missions · notes · weather · radar…" autocomplete="off" />
         <button class="btn secondary" id="btnClosePalette" type="button">Esc</button>
       </div>
       <div class="modalBody" id="cmdList"></div>
@@ -452,15 +452,16 @@
     (function(){
       "use strict";
 
-      // ===== Keys (localStorage) =====
+      // ===== Versioned keys (prevents weird breakage across updates) =====
+      const V = "v4";
       const K = {
-        NOTES: "cc_notes_v3",
-        NOTES_TIME: "cc_notes_time_v3",
-        PINS: "cc_pins_v3",
-        MISS: "cc_missions_v3",
-        HISTORY: "cc_history_v3",
-        TILES: "cc_tiles_v3",
-        FOCUS: "cc_focus_v3"
+        NOTES: "cc_notes_" + V,
+        NOTES_TIME: "cc_notes_time_" + V,
+        PINS: "cc_pins_" + V,
+        MISS: "cc_missions_" + V,
+        HISTORY: "cc_history_" + V,
+        TILES: "cc_tiles_" + V,
+        FOCUS: "cc_focus_" + V
       };
 
       // ===== Helpers =====
@@ -468,7 +469,7 @@
       const esc = (s)=>String(s).replace(/[&<>"']/g,c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[c]));
       const nowStamp = ()=> new Date().toLocaleString();
       const safeParse = (raw, fallback)=>{ try{ return JSON.parse(raw); } catch(e){ return fallback; } };
-      const openTab = (url)=> window.open(url, "_blank", "noopener");
+      const openTab = (url)=> window.open(url, "_blank", "noopener,noreferrer");
 
       // ===== UI =====
       const app = $("app");
@@ -483,7 +484,6 @@
         statusText.textContent = ok ? "Online" : "Degraded";
       }
 
-      // Clock tick
       function tick(){
         const d = new Date();
         clockBadge.textContent = "Time: " + d.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
@@ -524,13 +524,9 @@
         return { engine: engineEl.value, query: text };
       }
 
-      // Search history
-      function getHistory(){
-        return safeParse(localStorage.getItem(K.HISTORY)||"[]", []);
-      }
-      function saveHistory(arr){
-        localStorage.setItem(K.HISTORY, JSON.stringify(arr.slice(0, 18)));
-      }
+      function getHistory(){ return safeParse(localStorage.getItem(K.HISTORY)||"[]", []); }
+      function saveHistory(arr){ localStorage.setItem(K.HISTORY, JSON.stringify(arr.slice(0, 18))); }
+
       function addHistory(item){
         const h = getHistory();
         const key = item.engine + "|" + item.query;
@@ -539,6 +535,7 @@
         saveHistory(filtered);
         renderHistory();
       }
+
       function renderHistory(){
         const box = $("historyList");
         const h = getHistory();
@@ -553,7 +550,7 @@
           div.innerHTML = `
             <div>
               <div class="itemTitle">${esc(x.query)}</div>
-              <div class="itemMeta">${esc(x.engine)} · tap Open to run again</div>
+              <div class="itemMeta">${esc(x.engine)} · Open reruns it</div>
             </div>
             <div class="itemBtns">
               <button class="btn secondary" type="button" data-hopen="${i}">Open</button>
@@ -592,15 +589,15 @@
       // ===== Launch Tiles (editable) =====
       function defaultTiles(){
         return [
-          {name:"VirusTotal", tag:"scan file/url", url:"https://www.virustotal.com/gui/home/upload"},
-          {name:"HIBP", tag:"email breach", url:"https://haveibeenpwned.com/"},
-          {name:"urlscan.io", tag:"url intel", url:"https://urlscan.io/"},
-          {name:"Shodan", tag:"device search", url:"https://www.shodan.io/"},
-          {name:"WHOIS", tag:"domain info", url:"https://www.whois.com/whois/"},
-          {name:"Google Adv.", tag:"precision", url:"https://www.google.com/advanced_search"},
-          {name:"Speedtest", tag:"network", url:"https://www.speedtest.net/"},
-          {name:"Bleeping", tag:"fix guides", url:"https://www.bleepingcomputer.com/"},
-          {name:"Windows Sec", tag:"official", url:"https://www.microsoft.com/en-us/windows/security"}
+          {name:"WEATHER COMMAND CENTER", tag:"separate ops page (build next)", url:"https://cybercrow111.github.io/weather-command/"},
+          {name:"NWS Radar", tag:"live radar", url:"https://radar.weather.gov/"},
+          {name:"Caltrans QuickMap", tag:"closures + traffic", url:"https://quickmap.dot.ca.gov/"},
+          {name:"511 California", tag:"incidents", url:"https://www.511ca.org/"},
+          {name:"FEMA Flood Maps", tag:"hazard lookup", url:"https://msc.fema.gov/portal/home"},
+          {name:"ChatGPT", tag:"AI core", url:"https://chat.openai.com/"},
+          {name:"GitHub Repo", tag:"forge", url:"https://github.com/CyberCrow111/sentinel-anchor"},
+          {name:"Notebook / Docs", tag:"google drive", url:"https://drive.google.com/"},
+          {name:"YouTube", tag:"learning", url:"https://www.youtube.com/"}
         ];
       }
       function getTiles(){
@@ -612,7 +609,7 @@
         const tiles = getTiles();
         const box = $("quickTiles");
         box.innerHTML = "";
-        tiles.forEach((t, i)=>{
+        tiles.forEach((t)=>{
           const a = document.createElement("a");
           a.className = "tile";
           a.href = t.url || "#";
@@ -677,9 +674,9 @@ Type "reset" to restore defaults`,
       // ===== Missions =====
       function defaultMissions(){
         return [
-          {t:"Add your key links", d:"Pinned Links → set Victoria / Hub / anything"},
-          {t:"Daily log", d:"Notes → Daily → write 3 bullets"},
-          {t:"Run a quick check", d:"VirusTotal / HIBP when needed"}
+          {t:"Build Weather Command Center", d:"Create new repo: weather-command → link already placed in tiles"},
+          {t:"Daily log", d:"Notes → Daily → 3 bullets"},
+          {t:"Pin your key links", d:"Add Victoria / important hubs / receipts etc"}
         ];
       }
       function getMissions(){
@@ -754,10 +751,9 @@ Type "reset" to restore defaults`,
       // ===== Pinned Links =====
       function defaultPins(){
         return [
-          {name:"Victoria ❤️", url:"", note:"tap Edit"},
-          {name:"Crow-Tech Hub", url:"", note:"tap Edit"},
-          {name:"Control Panel", url:"https://github.com/CyberCrow111/sentinel-anchor", note:"repo"},
-          {name:"Public Site", url: window.location.href, note:"live"}
+          {name:"Weather Command Center", url:"https://cybercrow111.github.io/weather-command/", note:"(build next)"},
+          {name:"Sentinel Anchor Repo", url:"https://github.com/CyberCrow111/sentinel-anchor", note:"forge"},
+          {name:"Sentinel Anchor Live", url: window.location.href, note:"artifact"}
         ];
       }
       function getPins(){
@@ -864,7 +860,7 @@ Type "reset" to restore defaults`,
       function scheduleSave(){
         setNoteState("Saving…");
         clearTimeout(saveTimer);
-        saveTimer = setTimeout(saveNotes, 400);
+        saveTimer = setTimeout(saveNotes, 350);
       }
       function stamp(){
         insertAtCursor(notesEl, `\n[${nowStamp()}] `);
@@ -889,16 +885,14 @@ Next:
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `commander-notes-${stamp}.txt`;
+        a.download = `sentinel-notes-${stamp}.txt`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         toast("Exported");
       }
-      function importNotes(){
-        $("importFile").click();
-      }
+      function importNotes(){ $("importFile").click(); }
       $("importFile").addEventListener("change", async (e)=>{
         const file = e.target.files && e.target.files[0];
         if(!file) return;
@@ -954,7 +948,7 @@ Next:
 
       // ===== Reset local =====
       function resetLocal(){
-        if(!confirm("Reset local data (notes, pins, missions, tiles, history) on THIS device?")) return;
+        if(!confirm("Reset local data (notes, pins, missions, tiles, history, focus) on THIS device?")) return;
         Object.values(K).forEach(k=>localStorage.removeItem(k));
         location.reload();
       }
@@ -979,34 +973,33 @@ Next:
       const BASE_COMMANDS = [
         {name:"Search", desc:"Run search with current query", run:()=>doSearch()},
         {name:"Focus Mode", desc:"Toggle focus mode", run:()=>toggleFocus()},
-        {name:"Copy URL", desc:"Copy this page URL", run:()=>copyUrl()},
         {name:"Edit Launch Tiles", desc:"Add/edit/reset quick launch tools", run:()=>editTiles()},
+        {name:"Add Pin Link", desc:"Add a pinned link", run:()=>addPin()},
         {name:"Add Mission", desc:"Create a mission slot", run:()=>addMission()},
-        {name:"Clear History", desc:"Clear search history", run:()=>{ localStorage.removeItem(K.HISTORY); renderHistory(); toast("History cleared"); }},
         {name:"Stamp Note", desc:"Insert timestamp in notes", run:()=>stamp()},
         {name:"Daily Template", desc:"Insert daily note template", run:()=>daily()},
         {name:"Export Notes", desc:"Download notes .txt", run:()=>exportNotes()},
         {name:"Import Notes", desc:"Load notes from .txt", run:()=>importNotes()},
-        {name:"VirusTotal", desc:"Scan a file/URL", run:()=>openTab("https://www.virustotal.com/gui/home/upload")},
-        {name:"HIBP", desc:"Check breaches", run:()=>openTab("https://haveibeenpwned.com/")},
-        {name:"urlscan.io", desc:"URL intel", run:()=>openTab("https://urlscan.io/")},
-        {name:"Shodan", desc:"Device search", run:()=>openTab("https://www.shodan.io/")},
-        {name:"WHOIS", desc:"Domain lookup", run:()=>openTab("https://www.whois.com/whois/")},
+        {name:"Weather Command Center", desc:"Open the separate weather ops page (repo build next)", run:()=>openTab("https://cybercrow111.github.io/weather-command/")},
+        {name:"Radar (NWS)", desc:"Live radar", run:()=>openTab("https://radar.weather.gov/")},
+        {name:"Roads (QuickMap)", desc:"Closures + traffic", run:()=>openTab("https://quickmap.dot.ca.gov/")},
+        {name:"Copy URL", desc:"Copy this page URL", run:()=>copyUrl()},
         {name:"Repo (Forge)", desc:"Open GitHub repo", run:()=>openTab("https://github.com/CyberCrow111/sentinel-anchor")},
-        {name:"Public Site (Artifact)", desc:"Open the live site", run:()=>openTab(window.location.href)}
+        {name:"Reset Local", desc:"Clear local data for this device", run:()=>resetLocal()}
       ];
 
       function renderCommands(filter){
         const f = (filter||"").trim().toLowerCase();
         const q = (qEl.value||"").trim();
 
-        // smart commands based on query
         const smart = [];
         if(q){
+          const r = resolveSearch(q);
+          const qq = r ? r.query : q;
           smart.push(
-            {name:`Search Google: ${q}`, desc:"Run Google search for current query", run:()=>openTab(engines.google(resolveSearch(q).query))},
-            {name:`Search GitHub: ${q}`, desc:"Run GitHub search for current query", run:()=>openTab(engines.github(resolveSearch(q).query))},
-            {name:`Search Reddit: ${q}`, desc:"Run Reddit search for current query", run:()=>openTab(engines.reddit(resolveSearch(q).query))}
+            {name:`Search Google: ${qq}`, desc:"Run Google search for current query", run:()=>openTab(engines.google(qq))},
+            {name:`Search GitHub: ${qq}`, desc:"Run GitHub search for current query", run:()=>openTab(engines.github(qq))},
+            {name:`Search Reddit: ${qq}`, desc:"Run Reddit search for current query", run:()=>openTab(engines.reddit(qq))}
           );
         }
 
@@ -1024,7 +1017,6 @@ Next:
           cmdList.appendChild(div);
         });
 
-        // Enter runs first
         cmdInput.onkeydown = (e)=>{
           if(e.key === "Enter"){
             e.preventDefault();
@@ -1076,17 +1068,13 @@ Next:
         $("btnOpenRepo").addEventListener("click", ()=>openTab("https://github.com/CyberCrow111/sentinel-anchor"));
         $("btnOpenSite").addEventListener("click", ()=>openTab(window.location.href));
 
-        // Global hotkeys
         document.addEventListener("keydown", (e)=>{
           const k = e.key.toLowerCase();
 
-          // Ctrl/⌘+K opens palette
           if((e.ctrlKey || e.metaKey) && k === "k"){
             e.preventDefault();
             showPalette();
           }
-
-          // / opens palette (unless typing in input/textarea)
           if(k === "/" && !e.ctrlKey && !e.metaKey){
             const t = document.activeElement && document.activeElement.tagName;
             if(t !== "INPUT" && t !== "TEXTAREA"){
@@ -1094,8 +1082,6 @@ Next:
               showPalette();
             }
           }
-
-          // Esc closes palette
           if(e.key === "Escape"){
             hidePalette();
           }
@@ -1104,7 +1090,6 @@ Next:
         notesEl.addEventListener("input", scheduleSave);
       }
 
-      // ===== Boot =====
       function boot(){
         tick();
         setInterval(tick, 15000);
@@ -1120,15 +1105,13 @@ Next:
         setJS(true);
       }
 
-      // Hard safety: if boot throws, show badge
       try{
         document.addEventListener("DOMContentLoaded", boot);
       }catch(e){
         setJS(false, "ERROR");
       }
       window.addEventListener("error", ()=>setJS(false, "ERROR"));
-
     })();
   </script>
 </body>
-</html>
+  </html>
