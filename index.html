@@ -1,127 +1,1534 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crow-Tech Command Core</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Crow-Tech GitHub Command Center: a self-contained sci-fi digital operating system for tasks, portals, notes, weather, routines, and command-driven control."
+    />
+    <title>Crow-Tech GitHub Command Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #030814;
+        --bg-soft: rgba(8, 17, 36, 0.88);
+        --bg-card: rgba(10, 22, 46, 0.92);
+        --border: rgba(98, 212, 255, 0.2);
+        --border-strong: rgba(98, 212, 255, 0.4);
+        --text: #ecfaff;
+        --muted: #95afc7;
+        --accent: #61dcff;
+        --accent-strong: #1bb6ff;
+        --success: #77f9ae;
+        --warning: #ffd572;
+        --danger: #ff829f;
+        --shadow: 0 0 0 1px rgba(98, 212, 255, 0.12), 0 0 24px rgba(27, 182, 255, 0.16);
+        --radius: 22px;
+      }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: radial-gradient(circle at top, #0a0f1c, #000);
-    color: #00eaff;
-    text-align: center;
-}
+      * {
+        box-sizing: border-box;
+      }
 
-/* HEADER */
-h1 {
-    margin: 20px;
-    font-size: 26px;
-    text-shadow: 0 0 15px #00eaff;
-}
+      html {
+        color-scheme: dark;
+        scroll-behavior: smooth;
+      }
 
-/* GRID */
-.grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    padding: 20px;
-}
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Inter', sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top, rgba(27, 182, 255, 0.14), transparent 30%),
+          radial-gradient(circle at bottom right, rgba(97, 220, 255, 0.08), transparent 22%),
+          linear-gradient(180deg, #071120 0%, var(--bg) 100%);
+      }
 
-/* BUTTON */
-.btn {
-    padding: 20px;
-    border-radius: 15px;
-    background: rgba(10,15,28,0.9);
-    border: 1px solid #00eaff;
-    box-shadow: 0 0 10px #00eaff33;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.25s;
-    backdrop-filter: blur(5px);
-}
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
 
-.btn:hover {
-    background: #00eaff22;
-    box-shadow: 0 0 25px #00eaff;
-    transform: scale(1.05);
-}
+      button,
+      input,
+      textarea,
+      select {
+        font: inherit;
+      }
 
-/* GLOW PANEL */
-.panel {
-    margin: 15px;
-    padding: 10px;
-    border: 1px solid #00eaff44;
-    border-radius: 10px;
-    box-shadow: 0 0 10px #00eaff22 inset;
-}
+      button {
+        cursor: pointer;
+        border: none;
+      }
 
-/* STATUS */
-.status {
-    font-size: 12px;
-    opacity: 0.6;
-}
+      .shell {
+        width: min(1500px, 100%);
+        margin: 0 auto;
+        padding: 16px;
+      }
 
-/* PULSE ANIMATION */
-@keyframes pulse {
-    0% { box-shadow: 0 0 5px #00eaff; }
-    50% { box-shadow: 0 0 20px #00eaff; }
-    100% { box-shadow: 0 0 5px #00eaff; }
-}
+      .panel,
+      .topbar,
+      .hero,
+      dialog {
+        border: 1px solid var(--border);
+        background: var(--bg-soft);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(18px);
+      }
 
-.core {
-    animation: pulse 2s infinite;
-}
-</style>
-</head>
+      .topbar {
+        border-radius: 26px;
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-bottom: 16px;
+      }
 
-<body>
+      .title-stack h1,
+      .hero-copy h2,
+      .panel-title,
+      .modal-title {
+        font-family: 'Orbitron', sans-serif;
+        letter-spacing: 0.04em;
+        margin: 0;
+      }
 
-<h1 class="core">⚡ Crow-Tech Command Core</h1>
+      h1 {
+        font-size: clamp(1.8rem, 4vw, 2.9rem);
+      }
 
-<div class="panel">
-<div class="status">SYSTEM STATUS: ONLINE</div>
-</div>
+      h2 {
+        font-size: clamp(1.4rem, 3vw, 2.2rem);
+      }
 
-<div class="grid">
+      p {
+        margin: 0;
+      }
 
-<button class="btn" onclick="runPrompt('Create 4 unique Crow-Tech designs, futuristic, neon blue energy, trenchcoat armor, high detail')">
-⚙️ CREATE ASSETS
-</button>
+      .eyebrow {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        font-size: 0.72rem;
+        margin-bottom: 8px;
+      }
 
-<button class="btn" onclick="runPrompt('Turn this idea into a structured plan with steps and execution strategy')">
-🧠 PROCESS IDEA
-</button>
+      .muted,
+      .helper,
+      .meta,
+      .subtle,
+      .status-value {
+        color: var(--muted);
+      }
 
-<button class="btn" onclick="runPrompt('Generate monetization ideas and fastest way to make money from this')">
-💰 MONEY MOVE
-</button>
+      .topbar-actions,
+      .action-row,
+      .panel-head,
+      .stack-row,
+      .segmented,
+      .portal-actions,
+      .task-actions,
+      .note-actions,
+      .routine-actions,
+      .modal-actions,
+      .hero-actions,
+      .weather-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
 
-<button class="btn" onclick="runPrompt('Optimize my workflow, remove friction, increase speed and leverage')">
-🤖 SENTINEL
-</button>
+      .primary,
+      .secondary,
+      .ghost,
+      .chip,
+      .toggle,
+      .quick-link,
+      .command-run {
+        color: var(--text);
+        border-radius: 14px;
+        padding: 10px 14px;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      }
 
-<button class="btn" onclick="openLink('https://github.com/')">
-🗂️ SYSTEMS
-</button>
+      .primary,
+      .command-run,
+      .segmented button.active,
+      .favorite.active {
+        background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+        box-shadow: 0 0 18px rgba(27, 182, 255, 0.25);
+      }
 
-</div>
+      .secondary,
+      .ghost,
+      .chip,
+      .toggle,
+      .quick-link,
+      .segmented button,
+      .portal-actions button,
+      .task-actions button,
+      .note-actions button,
+      .routine-actions button {
+        background: rgba(97, 220, 255, 0.08);
+        border: 1px solid rgba(97, 220, 255, 0.16);
+      }
 
-<div class="panel">
-<div class="status">Crow-Tech Systems Active</div>
-</div>
+      .secondary:hover,
+      .primary:hover,
+      .ghost:hover,
+      .quick-link:hover,
+      .command-run:hover,
+      .portal-actions button:hover,
+      .task-actions button:hover,
+      .note-actions button:hover,
+      .routine-actions button:hover,
+      .segmented button:hover {
+        transform: translateY(-1px);
+      }
 
-<script>
-function runPrompt(text) {
-    const url = "https://chat.openai.com/?prompt=" + encodeURIComponent(text);
-    window.open(url, '_blank');
-}
+      .file-wrap {
+        position: relative;
+        overflow: hidden;
+      }
 
-function openLink(url) {
-    window.open(url, '_blank');
-}
-</script>
+      .file-wrap input {
+        position: absolute;
+        inset: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
 
-</body>
+      .hero {
+        border-radius: 26px;
+        padding: 20px;
+        display: grid;
+        gap: 18px;
+        margin-bottom: 16px;
+      }
+
+      .hero-copy {
+        display: grid;
+        gap: 10px;
+      }
+
+      .hero-actions {
+        margin-top: 8px;
+      }
+
+      .command-box {
+        border-radius: 22px;
+        padding: 18px;
+        background: rgba(2, 11, 24, 0.82);
+        border: 1px solid rgba(97, 220, 255, 0.18);
+        display: grid;
+        gap: 12px;
+      }
+
+      .command-input-row,
+      .form-grid,
+      .form-inline,
+      .search-row {
+        display: grid;
+        gap: 10px;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 14px;
+        border: 1px solid rgba(97, 220, 255, 0.18);
+        background: rgba(0, 0, 0, 0.28);
+        color: var(--text);
+      }
+
+      textarea {
+        min-height: 170px;
+        resize: vertical;
+      }
+
+      .dashboard,
+      .content-grid {
+        display: grid;
+        gap: 16px;
+      }
+
+      .panel {
+        border-radius: var(--radius);
+        padding: 18px;
+      }
+
+      .panel-head {
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+
+      .panel-title {
+        font-size: 1.08rem;
+      }
+
+      .status-pill,
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        background: rgba(97, 220, 255, 0.12);
+        color: var(--accent);
+      }
+
+      .status-pill.online::before {
+        content: '';
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--success);
+        box-shadow: 0 0 10px var(--success);
+      }
+
+      .weather-frame {
+        width: 100%;
+        min-height: 320px;
+        border: 1px solid rgba(97, 220, 255, 0.16);
+        border-radius: 18px;
+        background: rgba(0, 0, 0, 0.24);
+        margin-top: 14px;
+      }
+
+      .quick-grid,
+      .portal-grid,
+      .notes-list,
+      .task-list,
+      .routine-list,
+      .status-list {
+        display: grid;
+        gap: 12px;
+        margin-top: 14px;
+      }
+
+      .launch-card,
+      .portal-card,
+      .note-card,
+      .task-card,
+      .routine-card,
+      .status-item,
+      .focus-card {
+        border-radius: 18px;
+        border: 1px solid rgba(97, 220, 255, 0.12);
+        background: rgba(255, 255, 255, 0.03);
+        padding: 14px;
+      }
+
+      .launch-card,
+      .portal-card,
+      .note-card,
+      .task-card,
+      .focus-card {
+        display: grid;
+        gap: 10px;
+      }
+
+      .status-list {
+        list-style: none;
+        padding: 0;
+      }
+
+      .status-item,
+      .row-between,
+      .task-top,
+      .portal-top,
+      .note-top,
+      .routine-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .portal-card {
+        border-top: 4px solid var(--accent);
+      }
+
+      .task-card.completed {
+        opacity: 0.62;
+      }
+
+      .lane-now {
+        color: var(--warning);
+        background: rgba(255, 213, 114, 0.14);
+      }
+
+      .lane-today,
+      .tag.favorite {
+        color: var(--accent);
+        background: rgba(97, 220, 255, 0.14);
+      }
+
+      .lane-later {
+        color: var(--danger);
+        background: rgba(255, 130, 159, 0.15);
+      }
+
+      .health-done {
+        color: var(--success);
+        background: rgba(119, 249, 174, 0.14);
+      }
+
+      .segmented button {
+        flex: 1;
+      }
+
+      .progress {
+        width: 100%;
+        height: 10px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: rgba(97, 220, 255, 0.1);
+        margin-top: 14px;
+      }
+
+      .progress > span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(135deg, var(--success), var(--accent));
+      }
+
+      .empty {
+        border: 1px dashed rgba(97, 220, 255, 0.22);
+        border-radius: 16px;
+        padding: 18px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .toast {
+        position: fixed;
+        left: 50%;
+        bottom: 18px;
+        transform: translateX(-50%);
+        padding: 12px 18px;
+        border-radius: 999px;
+        border: 1px solid rgba(97, 220, 255, 0.22);
+        background: rgba(8, 19, 42, 0.95);
+        box-shadow: var(--shadow);
+        z-index: 20;
+      }
+
+      dialog {
+        border-radius: 24px;
+        color: var(--text);
+        width: min(92vw, 560px);
+        padding: 0;
+      }
+
+      dialog::backdrop {
+        background: rgba(0, 0, 0, 0.55);
+      }
+
+      .modal-body {
+        padding: 20px;
+        display: grid;
+        gap: 16px;
+      }
+
+      .modal-actions {
+        justify-content: flex-end;
+      }
+
+      @media (min-width: 720px) {
+        .shell {
+          padding: 24px;
+        }
+
+        .topbar {
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+        }
+
+        .hero {
+          grid-template-columns: 1.25fr 1fr;
+          align-items: stretch;
+        }
+
+        .command-input-row,
+        .form-inline,
+        .search-row {
+          grid-template-columns: 1fr auto;
+        }
+
+        .form-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .dashboard {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .content-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .quick-grid,
+        .portal-grid,
+        .notes-list {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1120px) {
+        .dashboard {
+          grid-template-columns: 1.25fr 1fr 1fr 0.9fr;
+        }
+
+        .content-grid {
+          grid-template-columns: 1.3fr 1fr 1fr 0.95fr;
+          align-items: start;
+        }
+
+        .portal-panel {
+          grid-column: span 2;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="title-stack">
+          <p class="eyebrow">GitHub Command Center</p>
+          <h1>Crow-Tech Daily Operating System</h1>
+          <p class="muted">One self-contained `index.html` to run your day, links, notes, routines, and focus stack.</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="seed-demo" class="ghost">Reset Demo Data</button>
+          <button id="export-profile" class="secondary">Export Profile</button>
+          <label class="secondary file-wrap">
+            Import Profile
+            <input id="import-profile" type="file" accept="application/json" />
+          </label>
+        </div>
+      </header>
+
+      <section class="hero">
+        <div class="hero-copy">
+          <div>
+            <p class="eyebrow">External Brain / Command Deck</p>
+            <h2>A fast, cross-device command center built to replace scattered tabs and reduce friction.</h2>
+          </div>
+          <p class="muted">
+            Use portals for systems, a focused execution queue for tasks, a persistent notes brain, health anchors, and a first-class Weather Hub panel.
+          </p>
+          <div class="hero-actions">
+            <a class="primary" href="#weather-panel">Open Weather Deck</a>
+            <a class="secondary" href="#portal-panel">Jump to Portals</a>
+            <a class="secondary" href="#task-panel">Jump to Tasks</a>
+          </div>
+        </div>
+
+        <div class="command-box">
+          <div>
+            <p class="eyebrow">Command System</p>
+            <strong>Issue commands like an ops console.</strong>
+          </div>
+          <div class="command-input-row">
+            <input
+              id="command-input"
+              type="text"
+              placeholder="Examples: add task buy food | open weather | add link youtube.com | note remember dentist"
+              autocomplete="off"
+            />
+            <button id="run-command" class="command-run">Run</button>
+          </div>
+          <p id="command-feedback" class="helper">System armed. Awaiting instructions.</p>
+        </div>
+      </section>
+
+      <section class="dashboard">
+        <article id="weather-panel" class="panel"></article>
+        <article id="today-panel" class="panel"></article>
+        <article id="quick-panel" class="panel"></article>
+        <article id="status-panel" class="panel"></article>
+      </section>
+
+      <section class="content-grid" style="margin-top: 16px">
+        <article id="portal-panel" class="panel portal-panel"></article>
+        <article id="task-panel" class="panel"></article>
+        <article id="notes-panel" class="panel"></article>
+        <article id="routine-panel" class="panel"></article>
+      </section>
+    </div>
+
+    <dialog id="portal-modal">
+      <form id="portal-modal-form" class="modal-body" method="dialog">
+        <div>
+          <p class="eyebrow">Portal Editor</p>
+          <h3 class="modal-title">Edit Portal</h3>
+        </div>
+        <input type="hidden" name="id" />
+        <div class="form-grid">
+          <input name="title" type="text" placeholder="Portal title" required />
+          <input name="url" type="text" placeholder="https://example.com" required />
+          <input name="icon" type="text" placeholder="Icon" maxlength="4" />
+          <input name="color" type="color" value="#61dcff" />
+          <select name="category">
+            <option value="weather">weather</option>
+            <option value="systems">systems</option>
+            <option value="money">money</option>
+            <option value="notes">notes</option>
+            <option value="media">media</option>
+            <option value="tools">tools</option>
+          </select>
+          <select name="favorite">
+            <option value="false">Not favorite</option>
+            <option value="true">Favorite</option>
+          </select>
+          <select name="pinned">
+            <option value="false">Not pinned</option>
+            <option value="true">Pinned</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="ghost" data-close-modal>Cancel</button>
+          <button type="submit" class="primary">Save Portal</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script>
+      (() => {
+        const STORAGE_KEY = 'crowtech-github-command-center';
+        const WEATHER_URL = 'https://cybercrow111.github.io/weather-hub/';
+        const portalCategories = ['weather', 'systems', 'money', 'notes', 'media', 'tools'];
+        const taskCategories = ['NOW', 'TODAY', 'LATER'];
+
+        const defaultState = () => ({
+          settings: {
+            focusMode: true,
+            quickLaunchCount: 4,
+            lastCommand: '',
+            portalFilter: 'all',
+            noteQuery: '',
+          },
+          portals: [
+            {
+              id: crypto.randomUUID(),
+              title: 'Weather Hub',
+              url: WEATHER_URL,
+              category: 'weather',
+              icon: '☁️',
+              color: '#61dcff',
+              favorite: true,
+              pinned: true,
+            },
+            {
+              id: crypto.randomUUID(),
+              title: 'GitHub',
+              url: 'https://github.com/',
+              category: 'systems',
+              icon: '🧠',
+              color: '#74a4ff',
+              favorite: true,
+              pinned: true,
+            },
+            {
+              id: crypto.randomUUID(),
+              title: 'YouTube',
+              url: 'https://youtube.com/',
+              category: 'media',
+              icon: '▶️',
+              color: '#ff617f',
+              favorite: false,
+              pinned: false,
+            },
+          ],
+          tasks: [
+            {
+              id: crypto.randomUUID(),
+              title: 'Review mission-critical tasks',
+              category: 'NOW',
+              completed: false,
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: crypto.randomUUID(),
+              title: 'Check Weather Hub before heading out',
+              category: 'TODAY',
+              completed: false,
+              createdAt: new Date().toISOString(),
+            },
+            {
+              id: crypto.randomUUID(),
+              title: 'Refine tomorrow\'s plan',
+              category: 'LATER',
+              completed: false,
+              createdAt: new Date().toISOString(),
+            },
+          ],
+          notes: [
+            {
+              id: crypto.randomUUID(),
+              title: 'Quick Recall',
+              content: 'Use the command system to add tasks, links, and launch Weather Hub fast.',
+              updatedAt: new Date().toISOString(),
+            },
+          ],
+          routines: [
+            { id: 'water', title: 'Water', complete: false },
+            { id: 'meds', title: 'Meds', complete: false },
+            { id: 'care', title: 'Basic Care', complete: false },
+          ],
+          noteDraft: {
+            title: 'Quick Recall',
+            content: 'Use the command system to add tasks, links, and launch Weather Hub fast.',
+          },
+        });
+
+        const state = loadState();
+
+        const nodes = {
+          weather: document.getElementById('weather-panel'),
+          today: document.getElementById('today-panel'),
+          quick: document.getElementById('quick-panel'),
+          status: document.getElementById('status-panel'),
+          portal: document.getElementById('portal-panel'),
+          task: document.getElementById('task-panel'),
+          notes: document.getElementById('notes-panel'),
+          routine: document.getElementById('routine-panel'),
+          commandInput: document.getElementById('command-input'),
+          commandFeedback: document.getElementById('command-feedback'),
+          runCommand: document.getElementById('run-command'),
+          exportProfile: document.getElementById('export-profile'),
+          importProfile: document.getElementById('import-profile'),
+          seedDemo: document.getElementById('seed-demo'),
+          portalModal: document.getElementById('portal-modal'),
+          portalModalForm: document.getElementById('portal-modal-form'),
+        };
+
+        function loadState() {
+          try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) return defaultState();
+            const parsed = JSON.parse(raw);
+            return mergeState(defaultState(), parsed);
+          } catch (error) {
+            console.error('State load failed', error);
+            return defaultState();
+          }
+        }
+
+        function mergeState(base, incoming) {
+          return {
+            ...base,
+            ...incoming,
+            settings: { ...base.settings, ...(incoming.settings || {}) },
+            noteDraft: { ...base.noteDraft, ...(incoming.noteDraft || {}) },
+          };
+        }
+
+        function saveState() {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function setState(updater) {
+          const next = typeof updater === 'function' ? updater(state) : updater;
+          Object.keys(state).forEach((key) => delete state[key]);
+          Object.assign(state, next);
+          saveState();
+          render();
+        }
+
+        function normalizeUrl(value) {
+          if (!value) return '';
+          return /^https?:\/\//i.test(value) ? value : `https://${value}`;
+        }
+
+        function formatDate(dateString) {
+          return new Intl.DateTimeFormat(undefined, {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+          }).format(new Date(dateString));
+        }
+
+        function toast(message) {
+          nodes.commandFeedback.textContent = message;
+          document.querySelector('.toast')?.remove();
+          const el = document.createElement('div');
+          el.className = 'toast';
+          el.textContent = message;
+          document.body.appendChild(el);
+          setTimeout(() => el.remove(), 2400);
+        }
+
+        function empty(message) {
+          return `<div class="empty"><p>${message}</p></div>`;
+        }
+
+        function getSortedPortals() {
+          return [...state.portals].sort(
+            (a, b) => Number(b.pinned) - Number(a.pinned) || Number(b.favorite) - Number(a.favorite) || a.title.localeCompare(b.title),
+          );
+        }
+
+        function getActiveTasks() {
+          return state.tasks.filter((task) => !task.completed);
+        }
+
+        function renderWeatherPanel() {
+          nodes.weather.innerHTML = `
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Weather Hub Integration</p>
+                <h3 class="panel-title">Live Weather Deck</h3>
+              </div>
+              <span class="tag favorite">First-Class</span>
+            </div>
+            <p class="muted">Always visible, embedded, and one tap away. Weather stays central instead of buried.</p>
+            <div class="weather-actions">
+              <a class="primary" href="${WEATHER_URL}" target="_blank" rel="noreferrer">Open Weather Hub</a>
+              <button class="secondary" data-command="open weather">Launch by Command</button>
+            </div>
+            <iframe class="weather-frame" src="${WEATHER_URL}" title="Crow-Tech Weather Hub"></iframe>
+          `;
+        }
+
+        function renderTodayPanel() {
+          const focusTasks = getActiveTasks().slice(0, state.settings.focusMode ? 3 : 6);
+          nodes.today.innerHTML = `
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Today Panel</p>
+                <h3 class="panel-title">Priority Stream</h3>
+              </div>
+              <span class="tag ${state.settings.focusMode ? 'favorite' : ''}">${state.settings.focusMode ? 'Focus Mode' : 'Expanded Mode'}</span>
+            </div>
+            <p class="muted">Shows the next most important moves plus fast navigation to action surfaces.</p>
+            <div class="segmented">
+              <button class="${state.settings.focusMode ? 'active' : ''}" data-action="toggle-focus">${state.settings.focusMode ? 'Focus On' : 'Focus Off'}</button>
+              <button data-action="goto-tasks">Task Queue</button>
+            </div>
+            <div class="task-list">
+              ${focusTasks.length
+                ? focusTasks
+                    .map(
+                      (task) => `
+                        <div class="focus-card">
+                          <div class="task-top">
+                            <strong>${task.title}</strong>
+                            <span class="tag lane-${task.category.toLowerCase()}">${task.category}</span>
+                          </div>
+                        </div>
+                      `,
+                    )
+                    .join('')
+                : empty('No active tasks. The deck is clear.')}
+            </div>
+          `;
+        }
+
+        function renderQuickPanel() {
+          const items = getSortedPortals().slice(0, state.settings.quickLaunchCount);
+          nodes.quick.innerHTML = `
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Quick Launch</p>
+                <h3 class="panel-title">Fast Portal Access</h3>
+              </div>
+              <span class="tag">${items.length} Ready</span>
+            </div>
+            <div class="quick-grid">
+              ${items
+                .map(
+                  (item) => `
+                    <article class="launch-card" style="border-top: 3px solid ${item.color}">
+                      <div class="row-between">
+                        <strong>${item.icon} ${item.title}</strong>
+                        ${item.favorite ? '<span class="tag favorite">Fav</span>' : ''}
+                      </div>
+                      <p class="meta">${item.category}</p>
+                      <a class="quick-link" href="${item.url}" target="_blank" rel="noreferrer">Launch</a>
+                    </article>
+                  `,
+                )
+                .join('')}
+            </div>
+          `;
+        }
+
+        function renderStatusPanel() {
+          const activeTasks = getActiveTasks().length;
+          const doneRoutines = state.routines.filter((item) => item.complete).length;
+          const favoritePortals = state.portals.filter((portal) => portal.favorite).length;
+          nodes.status.innerHTML = `
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">System Status</p>
+                <h3 class="panel-title">Operational Signals</h3>
+              </div>
+              <span class="status-pill online">Online</span>
+            </div>
+            <ul class="status-list">
+              <li class="status-item"><span>Active Tasks</span><span class="status-value">${activeTasks}</span></li>
+              <li class="status-item"><span>Favorite Portals</span><span class="status-value">${favoritePortals}</span></li>
+              <li class="status-item"><span>Routines Complete</span><span class="status-value">${doneRoutines}/${state.routines.length}</span></li>
+              <li class="status-item"><span>Last Command</span><span class="status-value">${state.settings.lastCommand || 'Awaiting input'}</span></li>
+            </ul>
+          `;
+        }
+
+        function renderPortalPanel() {
+          const filter = state.settings.portalFilter;
+          const visiblePortals = getSortedPortals().filter((portal) => filter === 'all' || portal.category === filter);
+          nodes.portal.innerHTML = `
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Portal System</p>
+                <h3 class="panel-title">Dynamic Portal Grid</h3>
+              </div>
+              <span class="tag favorite">${state.portals.length} Portals</span>
+            </div>
+            <p class="muted">Add, edit, categorize, color-code, favorite, pin, and launch the systems that matter.</p>
+            <form id="portal-create-form" class="form-grid" autocomplete="off">
+              <input name="title" type="text" placeholder="Portal title" required />
+              <input name="url" type="text" placeholder="https://example.com" required />
+              <input name="icon" type="text" placeholder="Icon e.g. ⚙️" maxlength="4" />
+              <input name="color" type="color" value="#61dcff" />
+              <select name="category">${portalCategories.map((category) => `<option value="${category}">${category}</option>`).join('')}</select>
+              <button class="primary" type="submit">Add Portal</button>
+            </form>
+            <div class="segmented" style="margin-top: 14px;">
+              <button class="${filter === 'all' ? 'active' : ''}" data-filter="all">All</button>
+              ${portalCategories
+                .map(
+                  (category) => `<button class="${filter === category ? 'active' : ''}" data-filter="${category}">${category}</button>`,
+                )
+                .join('')}
+            </div>
+            <div class="portal-grid">
+              ${visiblePortals.length
+                ? visiblePortals
+                    .map(
+                      (portal) => `
+                        <article class="portal-card" style="border-top-color: ${portal.color}">
+                          <div class="portal-top">
+                            <div>
+                              <strong>${portal.icon || '🔗'} ${portal.title}</strong>
+                              <p class="meta">${portal.url}</p>
+                            </div>
+                            <div class="stack-row">
+                              ${portal.favorite ? '<span class="tag favorite">Favorite</span>' : ''}
+                              ${portal.pinned ? '<span class="tag">Pinned</span>' : ''}
+                              <span class="tag">${portal.category}</span>
+                            </div>
+                          </div>
+                          <div class="portal-actions">
+                            <a class="secondary" href="${portal.url}" target="_blank" rel="noreferrer">Open</a>
+                            <button data-action="favorite-portal" data-id="${portal.id}">${portal.favorite ? 'Unfavorite' : 'Favorite'}</button>
+                            <button data-action="pin-portal" data-id="${portal.id}">${portal.pinned ? 'Unpin' : 'Pin'}</button>
+                            <button data-action="edit-portal" data-id="${portal.id}">Edit</button>
+                            <button data-action="delete-portal" data-id="${portal.id}">Delete</button>
+                          </div>
+                        </article>
+                      `,
+                    )
+                    .join('')
+                : empty('No portals match the current category filter.')}
+            </div>
+          `;
+        }
+
+        function renderTaskPanel() {
+          const tasks = [...state.tasks].sort((a, b) => Number(a.completed) - Number(b.completed));
+          const visibleTasks = state.settings.focusMode
+            ? tasks.filter((task) => !task.completed).slice(0, 3).concat(tasks.filter((task) => task.completed))
+            : tasks;
+
+          nodes.task.innerHTML = `
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Task + Focus</p>
+                <h3 class="panel-title">Execution Queue</h3>
+              </div>
+              <span class="tag favorite">${getActiveTasks().length} Active</span>
+            </div>
+            <form id="task-form" class="form-grid" autocomplete="off">
+              <input name="title" type="text" placeholder="Create task" required />
+              <select name="category">${taskCategories.map((lane) => `<option value="${lane}">${lane}</option>`).join('')}</select>
+              <button class="primary" type="submit">Add Task</button>
+            </form>
+            <div class="segmented" style="margin-top: 14px;">
+              <button class="${state.settings.focusMode ? 'active' : ''}" data-action="toggle-focus">${state.settings.focusMode ? 'Focus Mode On' : 'Focus Mode Off'}</button>
+            </div>
+            <div class="task-list">
+              ${visibleTasks.length
+                ? visibleTasks
+                    .map(
+                      (task) => `
+                        <article class="task-card ${task.completed ? 'completed' : ''}">
+                          <div class="task-top">
+                            <strong>${task.title}</strong>
+                            <span class="tag lane-${task.category.toLowerCase()}">${task.category}</span>
+                          </div>
+                          <p class="meta">Created ${formatDate(task.createdAt)}</p>
+                          <div class="task-actions">
+                            <button data-action="toggle-task" data-id="${task.id}">${task.completed ? 'Reopen' : 'Complete'}</button>
+                            <button data-action="cycle-task" data-id="${task.id}">Cycle Lane</button>
+                            <button data-action="delete-task" data-id="${task.id}">Delete</button>
+                          </div>
+                        </article>
+                      `,
+                    )
+                    .join('')
+                : empty('No tasks loaded yet.')}
+            </div>
+          `;
+        }
+
+        function renderNotesPanel() {
+          const query = state.settings.noteQuery.trim().toLowerCase();
+          const notes = state.notes.filter((note) => {
+            if (!query) return true;
+            return note.title.toLowerCase().includes(query) || note.content.toLowerCase().includes(query);
+          });
+
+          nodes.notes.innerHTML = `
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Notes + Brain</p>
+                <h3 class="panel-title">Recall Engine</h3>
+              </div>
+              <span class="tag favorite">Persistent</span>
+            </div>
+            <div class="search-row">
+              <input id="note-search" type="text" placeholder="Search notes" value="${state.settings.noteQuery}" />
+              <button class="secondary" id="clear-search">Clear</button>
+            </div>
+            <div class="form-grid" style="margin-top: 14px;">
+              <input id="note-title" type="text" placeholder="Note title" value="${escapeHtml(state.noteDraft.title)}" />
+              <button class="primary" id="save-note">Quick Save</button>
+            </div>
+            <textarea id="note-content" placeholder="Capture prompts, plans, and memory anchors...">${escapeHtml(state.noteDraft.content)}</textarea>
+            <div class="note-actions">
+              <button class="secondary" id="new-note">New Note</button>
+              <button class="secondary" id="save-draft">Save Draft Only</button>
+            </div>
+            <div class="notes-list">
+              ${notes.length
+                ? notes
+                    .map(
+                      (note) => `
+                        <article class="note-card">
+                          <div class="note-top">
+                            <strong>${note.title}</strong>
+                            <span class="meta">${formatDate(note.updatedAt)}</span>
+                          </div>
+                          <p>${escapeHtml(note.content.slice(0, 180) || 'No content yet.')}</p>
+                          <div class="note-actions">
+                            <button data-action="load-note" data-id="${note.id}">Load</button>
+                            <button data-action="delete-note" data-id="${note.id}">Delete</button>
+                          </div>
+                        </article>
+                      `,
+                    )
+                    .join('')
+                : empty('No notes match the current search.')}
+            </div>
+          `;
+        }
+
+        function renderRoutinePanel() {
+          const completed = state.routines.filter((item) => item.complete).length;
+          const percent = Math.round((completed / state.routines.length) * 100);
+          nodes.routine.innerHTML = `
+            <div class="panel-head">
+              <div>
+                <p class="eyebrow">Routines / Health Anchors</p>
+                <h3 class="panel-title">Daily Stabilizers</h3>
+              </div>
+              <span class="tag ${completed === state.routines.length ? 'health-done' : ''}">${percent}% Complete</span>
+            </div>
+            <p class="muted">Keep the basics visible: water, meds, and care should never hide behind app friction.</p>
+            <div class="progress"><span style="width: ${percent}%"></span></div>
+            <div class="routine-list">
+              ${state.routines
+                .map(
+                  (item) => `
+                    <article class="routine-card">
+                      <div class="routine-top">
+                        <div>
+                          <strong>${item.title}</strong>
+                          <p class="meta">Daily anchor check</p>
+                        </div>
+                        <span class="tag ${item.complete ? 'health-done' : ''}">${item.complete ? 'Done' : 'Pending'}</span>
+                      </div>
+                      <div class="routine-actions">
+                        <button data-action="toggle-routine" data-id="${item.id}">${item.complete ? 'Mark Pending' : 'Mark Done'}</button>
+                      </div>
+                    </article>
+                  `,
+                )
+                .join('')}
+            </div>
+          `;
+        }
+
+        function escapeHtml(value) {
+          return String(value)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+        }
+
+        function render() {
+          renderWeatherPanel();
+          renderTodayPanel();
+          renderQuickPanel();
+          renderStatusPanel();
+          renderPortalPanel();
+          renderTaskPanel();
+          renderNotesPanel();
+          renderRoutinePanel();
+          bindRenderedEvents();
+        }
+
+        function bindRenderedEvents() {
+          nodes.weather.querySelector('[data-command="open weather"]')?.addEventListener('click', () => {
+            executeCommand('open weather');
+          });
+
+          nodes.today.querySelectorAll('[data-action]').forEach((button) => {
+            button.addEventListener('click', () => {
+              const action = button.dataset.action;
+              if (action === 'toggle-focus') {
+                setState({
+                  ...state,
+                  settings: { ...state.settings, focusMode: !state.settings.focusMode },
+                });
+              }
+              if (action === 'goto-tasks') {
+                document.getElementById('task-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            });
+          });
+
+          nodes.portal.querySelector('#portal-create-form')?.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const title = String(formData.get('title')).trim();
+            const url = normalizeUrl(String(formData.get('url')).trim());
+            const icon = String(formData.get('icon')).trim() || '🔗';
+            const color = String(formData.get('color')).trim() || '#61dcff';
+            const category = String(formData.get('category')).trim();
+            setState({
+              ...state,
+              portals: [{ id: crypto.randomUUID(), title, url, icon, color, category, favorite: false, pinned: false }, ...state.portals],
+            });
+            toast(`Portal added: ${title}`);
+          });
+
+          nodes.portal.querySelectorAll('[data-filter]').forEach((button) => {
+            button.addEventListener('click', () => {
+              setState({
+                ...state,
+                settings: { ...state.settings, portalFilter: button.dataset.filter },
+              });
+            });
+          });
+
+          nodes.portal.querySelectorAll('[data-action]').forEach((button) => {
+            button.addEventListener('click', () => handlePortalAction(button.dataset.action, button.dataset.id));
+          });
+
+          nodes.task.querySelector('#task-form')?.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const title = String(formData.get('title')).trim();
+            const category = String(formData.get('category')).trim();
+            setState({
+              ...state,
+              tasks: [{ id: crypto.randomUUID(), title, category, completed: false, createdAt: new Date().toISOString() }, ...state.tasks],
+            });
+            toast(`Task added: ${title}`);
+          });
+
+          nodes.task.querySelectorAll('[data-action]').forEach((button) => {
+            button.addEventListener('click', () => handleTaskAction(button.dataset.action, button.dataset.id));
+          });
+
+          nodes.notes.querySelector('#note-search')?.addEventListener('input', (event) => {
+            setState({
+              ...state,
+              settings: { ...state.settings, noteQuery: event.target.value },
+            });
+          });
+
+          nodes.notes.querySelector('#clear-search')?.addEventListener('click', () => {
+            setState({
+              ...state,
+              settings: { ...state.settings, noteQuery: '' },
+            });
+          });
+
+          nodes.notes.querySelector('#note-title')?.addEventListener('input', (event) => {
+            setState({
+              ...state,
+              noteDraft: { ...state.noteDraft, title: event.target.value },
+            });
+          });
+
+          nodes.notes.querySelector('#note-content')?.addEventListener('input', (event) => {
+            setState({
+              ...state,
+              noteDraft: { ...state.noteDraft, content: event.target.value },
+            });
+          });
+
+          nodes.notes.querySelector('#save-note')?.addEventListener('click', () => {
+            const title = state.noteDraft.title.trim() || 'Untitled Note';
+            const content = state.noteDraft.content.trim();
+            setState({
+              ...state,
+              notes: [{ id: crypto.randomUUID(), title, content, updatedAt: new Date().toISOString() }, ...state.notes],
+            });
+            toast(`Note saved: ${title}`);
+          });
+
+          nodes.notes.querySelector('#new-note')?.addEventListener('click', () => {
+            setState({
+              ...state,
+              noteDraft: { title: '', content: '' },
+            });
+            toast('Note editor cleared.');
+          });
+
+          nodes.notes.querySelector('#save-draft')?.addEventListener('click', () => {
+            saveState();
+            toast('Draft saved to local storage.');
+          });
+
+          nodes.notes.querySelectorAll('[data-action]').forEach((button) => {
+            button.addEventListener('click', () => handleNoteAction(button.dataset.action, button.dataset.id));
+          });
+
+          nodes.routine.querySelectorAll('[data-action]').forEach((button) => {
+            button.addEventListener('click', () => handleRoutineAction(button.dataset.id));
+          });
+        }
+
+        function handlePortalAction(action, id) {
+          const portal = state.portals.find((item) => item.id === id);
+          if (!portal) return;
+
+          if (action === 'favorite-portal') {
+            setState({
+              ...state,
+              portals: state.portals.map((item) => (item.id === id ? { ...item, favorite: !item.favorite } : item)),
+            });
+            return;
+          }
+
+          if (action === 'pin-portal') {
+            setState({
+              ...state,
+              portals: state.portals.map((item) => (item.id === id ? { ...item, pinned: !item.pinned } : item)),
+            });
+            return;
+          }
+
+          if (action === 'delete-portal') {
+            setState({
+              ...state,
+              portals: state.portals.filter((item) => item.id !== id),
+            });
+            toast(`Portal removed: ${portal.title}`);
+            return;
+          }
+
+          if (action === 'edit-portal') {
+            openPortalModal(portal);
+          }
+        }
+
+        function handleTaskAction(action, id) {
+          if (action === 'toggle-focus') {
+            setState({
+              ...state,
+              settings: { ...state.settings, focusMode: !state.settings.focusMode },
+            });
+            return;
+          }
+
+          const task = state.tasks.find((item) => item.id === id);
+          if (!task) return;
+
+          if (action === 'toggle-task') {
+            setState({
+              ...state,
+              tasks: state.tasks.map((item) => (item.id === id ? { ...item, completed: !item.completed } : item)),
+            });
+            return;
+          }
+
+          if (action === 'cycle-task') {
+            const nextCategory = task.category === 'NOW' ? 'TODAY' : task.category === 'TODAY' ? 'LATER' : 'NOW';
+            setState({
+              ...state,
+              tasks: state.tasks.map((item) => (item.id === id ? { ...item, category: nextCategory } : item)),
+            });
+            toast(`${task.title} moved to ${nextCategory}.`);
+            return;
+          }
+
+          if (action === 'delete-task') {
+            setState({
+              ...state,
+              tasks: state.tasks.filter((item) => item.id !== id),
+            });
+            toast(`Task removed: ${task.title}`);
+          }
+        }
+
+        function handleNoteAction(action, id) {
+          const note = state.notes.find((item) => item.id === id);
+          if (!note) return;
+
+          if (action === 'load-note') {
+            setState({
+              ...state,
+              noteDraft: { title: note.title, content: note.content },
+            });
+            toast(`Loaded note: ${note.title}`);
+            return;
+          }
+
+          if (action === 'delete-note') {
+            setState({
+              ...state,
+              notes: state.notes.filter((item) => item.id !== id),
+            });
+            toast(`Deleted note: ${note.title}`);
+          }
+        }
+
+        function handleRoutineAction(id) {
+          const routine = state.routines.find((item) => item.id === id);
+          if (!routine) return;
+          setState({
+            ...state,
+            routines: state.routines.map((item) => (item.id === id ? { ...item, complete: !item.complete } : item)),
+          });
+          toast(`${routine.title} ${routine.complete ? 'marked pending' : 'completed'}.`);
+        }
+
+        function openPortalModal(portal) {
+          const form = nodes.portalModalForm;
+          form.elements.id.value = portal.id;
+          form.elements.title.value = portal.title;
+          form.elements.url.value = portal.url;
+          form.elements.icon.value = portal.icon;
+          form.elements.color.value = portal.color;
+          form.elements.category.value = portal.category;
+          form.elements.favorite.value = String(portal.favorite);
+          form.elements.pinned.value = String(portal.pinned);
+          nodes.portalModal.showModal();
+        }
+
+        nodes.portalModalForm.addEventListener('submit', (event) => {
+          event.preventDefault();
+          const formData = new FormData(nodes.portalModalForm);
+          const id = String(formData.get('id'));
+          setState({
+            ...state,
+            portals: state.portals.map((item) =>
+              item.id === id
+                ? {
+                    ...item,
+                    title: String(formData.get('title')).trim(),
+                    url: normalizeUrl(String(formData.get('url')).trim()),
+                    icon: String(formData.get('icon')).trim() || '🔗',
+                    color: String(formData.get('color')).trim() || '#61dcff',
+                    category: String(formData.get('category')).trim(),
+                    favorite: String(formData.get('favorite')) === 'true',
+                    pinned: String(formData.get('pinned')) === 'true',
+                  }
+                : item,
+            ),
+          });
+          nodes.portalModal.close();
+          toast('Portal updated.');
+        });
+
+        nodes.portalModal.querySelectorAll('[data-close-modal]').forEach((button) => {
+          button.addEventListener('click', () => nodes.portalModal.close());
+        });
+
+        nodes.runCommand.addEventListener('click', () => {
+          executeCommand(nodes.commandInput.value);
+          nodes.commandInput.value = '';
+        });
+
+        nodes.commandInput.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            nodes.runCommand.click();
+          }
+        });
+
+        function executeCommand(raw) {
+          const command = raw.trim();
+          if (!command) {
+            toast('Enter a command first.');
+            return;
+          }
+
+          const lower = command.toLowerCase();
+
+          if (lower.startsWith('add task ')) {
+            const title = command.slice(9).trim();
+            setState({
+              ...state,
+              settings: { ...state.settings, lastCommand: command },
+              tasks: [{ id: crypto.randomUUID(), title, category: 'TODAY', completed: false, createdAt: new Date().toISOString() }, ...state.tasks],
+            });
+            toast(`Task added: ${title}`);
+            return;
+          }
+
+          if (lower.startsWith('add link ')) {
+            const url = normalizeUrl(command.slice(9).trim());
+            const hostname = new URL(url).hostname.replace('www.', '');
+            setState({
+              ...state,
+              settings: { ...state.settings, lastCommand: command },
+              portals: [
+                { id: crypto.randomUUID(), title: hostname, url, category: 'tools', icon: '🔗', color: '#61dcff', favorite: false, pinned: false },
+                ...state.portals,
+              ],
+            });
+            toast(`Portal link added: ${hostname}`);
+            return;
+          }
+
+          if (lower.startsWith('note ')) {
+            const content = command.slice(5).trim();
+            const title = content.split(' ').slice(0, 4).join(' ') || 'Quick Command Note';
+            setState({
+              ...state,
+              settings: { ...state.settings, lastCommand: command },
+              notes: [{ id: crypto.randomUUID(), title, content, updatedAt: new Date().toISOString() }, ...state.notes],
+            });
+            toast(`Command note saved: ${title}`);
+            return;
+          }
+
+          if (lower === 'open weather') {
+            window.open(WEATHER_URL, '_blank', 'noopener');
+            setState({
+              ...state,
+              settings: { ...state.settings, lastCommand: command },
+            });
+            toast('Weather Hub launched.');
+            return;
+          }
+
+          if (lower.startsWith('open ')) {
+            const query = lower.replace('open ', '').trim();
+            const match = state.portals.find((portal) => portal.title.toLowerCase().includes(query));
+            if (!match) {
+              toast(`No portal found for: ${query}`);
+              return;
+            }
+            window.open(match.url, '_blank', 'noopener');
+            setState({
+              ...state,
+              settings: { ...state.settings, lastCommand: command },
+            });
+            toast(`Opened ${match.title}.`);
+            return;
+          }
+
+          if (lower === 'focus on' || lower === 'focus mode on') {
+            setState({
+              ...state,
+              settings: { ...state.settings, focusMode: true, lastCommand: command },
+            });
+            toast('Focus mode enabled.');
+            return;
+          }
+
+          if (lower === 'focus off' || lower === 'focus mode off') {
+            setState({
+              ...state,
+              settings: { ...state.settings, focusMode: false, lastCommand: command },
+            });
+            toast('Focus mode disabled.');
+            return;
+          }
+
+          if (lower === 'export profile') {
+            exportProfile();
+            setState({
+              ...state,
+              settings: { ...state.settings, lastCommand: command },
+            });
+            return;
+          }
+
+          toast('Unknown command. Try add task, add link, note, open weather, open <portal>, focus on/off, export profile.');
+        }
+
+        function exportProfile() {
+          const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `crow-tech-profile-${new Date().toISOString().slice(0, 10)}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+          toast('Profile exported.');
+        }
+
+        nodes.exportProfile.addEventListener('click', exportProfile);
+
+        nodes.importProfile.addEventListener('change', async (event) => {
+          const file = event.target.files?.[0];
+          if (!file) return;
+          try {
+            const parsed = JSON.parse(await file.text());
+            setState(mergeState(defaultState(), parsed));
+            toast('Profile imported successfully.');
+          } catch (error) {
+            console.error(error);
+            toast('Import failed. Please use a valid JSON export.');
+          }
+          event.target.value = '';
+        });
+
+        nodes.seedDemo.addEventListener('click', () => {
+          setState(defaultState());
+          toast('Demo data restored.');
+        });
+
+        render();
+      })();
+    </script>
+  </body>
 </html>
